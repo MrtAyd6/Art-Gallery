@@ -1,0 +1,8 @@
+sudo -u postgres psgl   //postgresql kullanıcısı ile psql arayüzüne gir
+CREATE DATABASE art_gallery_db; //yeni veritabanı oluştur
+\q  //terminale çıkış yap
+
+//sql dosyalarını çalıştır
+cat /home/mrt/Desktop/art_gallery_db/Database/create_tables.sql | sudo -u postgres psql -d art_gallery_db
+cat /home/mrt/Desktop/art_gallery_db/Database/triggers.sql | sudo -u postgres psql -d art_gallery_db
+cat /home/mrt/Desktop/art_gallery_db/Database/dummy_data.sql | sudo -u postgres psql -d art_gallery_db

@@ -2,15 +2,15 @@
 
 Aşama 1: Veritabanı Analizi ve Tasarımı
 
-- [ ] Varlıkların (Kullanıcılar, Eserler, Etkinlikler, Rezervasyonlar, Yorumlar vb.) belirlenmesi.  
-- [ ] Tabloların ve ilişkilerin planlanması (ER diyagram çizim).  
-- [ ] Teslim edilecek rapor için veritabanı tasarımı notlarının alınmaya başlanması.  
+- [x] Varlıkların (Kullanıcılar, Eserler, Etkinlikler, Rezervasyonlar, Yorumlar vb.) belirlenmesi.  
+- [x] Tabloların ve ilişkilerin planlanması (ER diyagram çizim).  
+- [x] Teslim edilecek rapor için veritabanı tasarımı notlarının alınmaya başlanması.  
 
 Aşama 2: Veritabanı Geliştirme (SQL)
 
-- [ ] Tabloların (Primary Key, Foreign Key kısıtlamalarıyla) veritabanında oluşturulması.
-- [ ] Kontenjan takibi ve istatistik güncellemeleri (otomatik düşme/artma) için Trigger'ların yazılması.
-- [ ] Sistemi test edebilmek için veritabanına örnek eser, kullanıcı ve etkinlik verilerinin girilmesi.
+- [x] Tabloların (Primary Key, Foreign Key kısıtlamalarıyla) veritabanında oluşturulması.
+- [x] Kontenjan takibi ve istatistik güncellemeleri (otomatik düşme/artma) için Trigger'ların yazılması.
+- [x] Sistemi test edebilmek için veritabanına örnek eser, kullanıcı ve etkinlik verilerinin girilmesi.
 
 Aşama 3: Backend ve İş Mantığı (API Katmanı)
 
