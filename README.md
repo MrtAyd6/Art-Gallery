@@ -8,9 +8,9 @@ Aşama 1: Veritabanı Analizi ve Tasarımı
 
 Aşama 2: Veritabanı Geliştirme (SQL)
 
-- [ ] Tabloların (Primary Key, Foreign Key kısıtlamalarıyla) veritabanında oluşturulması.
-- [ ] Kontenjan takibi ve istatistik güncellemeleri (otomatik düşme/artma) için Trigger'ların yazılması.
-- [ ] Sistemi test edebilmek için veritabanına örnek eser, kullanıcı ve etkinlik verilerinin girilmesi.
+- [x] Tabloların (Primary Key, Foreign Key kısıtlamalarıyla) veritabanında oluşturulması.
+- [x] Kontenjan takibi ve istatistik güncellemeleri (otomatik düşme/artma) için Trigger'ların yazılması.
+- [x] Sistemi test edebilmek için veritabanına örnek eser, kullanıcı ve etkinlik verilerinin girilmesi.
 
 Aşama 3: Backend ve İş Mantığı (API Katmanı)
 
