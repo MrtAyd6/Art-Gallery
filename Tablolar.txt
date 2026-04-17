@@ -1,0 +1,49 @@
+1 - Temel Veri Tabloları
+
+Users (Kullanıcılar)
+    - UserID (INT) - Primary Key, Auto Increment
+    - FullName (VARCHAR) - Kullanıcının adı soyadı
+    - Email (VARCHAR) - Unique (Her e-posta sadece bir kez kayıt olabilir)
+    - PasswordHash (VARCHAR) - Şifreler düz metin tutulmaz, hash'lenmesi lazım
+    - Role (VARCHAR) - 'Admin' veya 'Customer'
+
+Artworks (Eserler)
+    - ArtworkID (INT) - Primary Key
+    - Title (VARCHAR) - Eserin adı
+    - ArtistName ( VARCHAR) - Sanatçının adı
+    - Description (TEXT) - Eserin uzun açıklaması
+    - ImageUrl (VARCHAR) - Görselin dosya yolu veya linki
+    - Price (Decimal(10,2)) - Parasal değerler için Float yerine her zaman Decimal kullanılır
+    - Category (VARCHAR) - Tablo, heykel, dijital sanat vb. (filtreleme için önemli)
+
+Events (Etkinlikler/Atölyeler)
+    - EventID (INT) - Primary Key
+    - Title (VARCHAR) - Etkinlik adı
+    - EventDate (DATETIME) - Etkinliğin gerçekleşeceği tarih ve saat
+    - TotalCapacity (INT) - Maksimum katılımcı sayısı
+    - CurrentCapacity (INT) - Kalan kontenjan (Bunu Trigger ile güncelleyeceğiz)
+    - Price (Decimal(10,2)) - Etkinlik ücreti
+
+
+2 - İlişki ve İşlem tablosu
+
+Reservations (Rezervasyonlar)
+    - ReservationID (INT) - Primary Key
+    - UserID (INT) - Foreign Key (Users tablosuna bağlı)
+    - EventID (INT) - Foreign Key (Events tablosuna bağlı)
+    - ParticipantCount (INT) - Kaç kişilik rezervasyon yapıldığı
+    - Status (VARCHAR) - 'Aktif', 'İptal edildi', 'Tamamlandı' (Rezervasyon güncelleme/iptal etme gereksinimi için)
+    - CreatedAt (DATETIME) - Rezervasyonun yapıldığı an
+
+Favorites (Favoriler)
+    - UserID (INT) - Foreign Key
+    - ArtworkID (INT) - Foreign Key
+
+Reviews (Yorumlar)
+    - ReviewID (INT) - Primary Key
+    - UserID (INT) - Foreign Key
+    - ArtworkID (INT) - Foreign Key (Sadece eser yorumuysa dolu olur)
+    - EventID (INT) - Foreign Key (Sadece etkinlik yorumuysa dolu olur)
+    - Rating (TINYINT) - 1 ile 5 arası puanlama
+    - Comment (TEXT) - Yorum metni
+    - HelpfulVotes (INT) - "Faydalı bulma" oylaru için sayaç
