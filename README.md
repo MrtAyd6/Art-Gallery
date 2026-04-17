@@ -2,9 +2,9 @@
 
 Aşama 1: Veritabanı Analizi ve Tasarımı
 
-- [ ] Varlıkların (Kullanıcılar, Eserler, Etkinlikler, Rezervasyonlar, Yorumlar vb.) belirlenmesi.  
-- [ ] Tabloların ve ilişkilerin planlanması (ER diyagram çizim).  
-- [ ] Teslim edilecek rapor için veritabanı tasarımı notlarının alınmaya başlanması.  
+- [x] Varlıkların (Kullanıcılar, Eserler, Etkinlikler, Rezervasyonlar, Yorumlar vb.) belirlenmesi.  
+- [x] Tabloların ve ilişkilerin planlanması (ER diyagram çizim).  
+- [x] Teslim edilecek rapor için veritabanı tasarımı notlarının alınmaya başlanması.  
 
 Aşama 2: Veritabanı Geliştirme (SQL)
 
