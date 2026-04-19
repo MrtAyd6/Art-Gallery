@@ -34,3 +34,4 @@
 /home/mrt/Desktop/art_gallery/Backend/obj/Debug/net10.0/Backend.pdb
 /home/mrt/Desktop/art_gallery/Backend/obj/Debug/net10.0/Backend.genruntimeconfig.cache
 /home/mrt/Desktop/art_gallery/Backend/obj/Debug/net10.0/ref/Backend.dll
+/home/mrt/Desktop/art_gallery/Backend/bin/Debug/net10.0/BCrypt.Net-Next.dll
