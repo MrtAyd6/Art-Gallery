@@ -34,7 +34,7 @@ CREATE TABLE Events (
 -- REZERVASYONLAR TABLOSU
 -- Kulanıcılar ve Etkinlikler arasındaki bağlantıyı kurar. (1:N ilişki)
 CREATE TABLE Reservations(
-    RezervationID SERIAL PRIMARY KEY,
+    ReservationID SERIAL PRIMARY KEY,
     UserID INT NOT NULL,
     EventID INT NOT NULL,
     ParticipantCount INT NOT NULL,  -- Kaç kişilik yer ayırtıldığı
@@ -51,6 +51,18 @@ CREATE TABLE Favorites (
     UserID INT NOT NULL,
     ArtworkID INT NOT NULL,
     PRIMARY KEY (UserID, ArtworkID),    -- İki kolonun birleşimi PrimaryKey'dir. Aynı eser iki kez favorilenemez
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
+    FOREIGN KEY (ArtworkID) REFERENCES Artworks(ArtworkID) ON DELETE CASCADE
+);
+
+-- SİPARİŞLER TABLOSU
+CREATE TABLE Orders (
+    OrderID SERIAL PRIMARY KEY,
+    UserID INT NOT NULL,
+    ArtworkID INT NOT NULL,
+    OrderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PaymentMethod VARCHAR(50) NOT NULL, -- Kredi kartı, havale vb.
+    Status VARCHAR(50) DEFAULT 'Onaylandı',
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
     FOREIGN KEY (ArtworkID) REFERENCES Artworks(ArtworkID) ON DELETE CASCADE
 );
