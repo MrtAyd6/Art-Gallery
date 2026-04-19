@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "4Chv/+f+RQY=",
+  "dgSpecHash": "hKEAOEZ4hmA=",
   "success": true,
   "projectFilePath": "/home/mrt/Desktop/art_gallery/Backend/Backend.csproj",
   "expectedPackageFiles": [
+    "/home/mrt/.nuget/packages/bcrypt.net-next/4.1.0/bcrypt.net-next.4.1.0.nupkg.sha512",
     "/home/mrt/.nuget/packages/dapper/2.1.72/dapper.2.1.72.nupkg.sha512",
     "/home/mrt/.nuget/packages/microsoft.aspnetcore.openapi/10.0.4/microsoft.aspnetcore.openapi.10.0.4.nupkg.sha512",
     "/home/mrt/.nuget/packages/microsoft.openapi/2.0.0/microsoft.openapi.2.0.0.nupkg.sha512",

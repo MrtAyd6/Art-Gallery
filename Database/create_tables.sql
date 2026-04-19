@@ -5,7 +5,7 @@ CREATE TABLE Users (
     FullName VARCHAR(100) NOT NULL,
     Email VARCHAR(100) UNIQUE NOT NULL, -- UNIQUE: Aynı e-posta iki kez kayıt olamaz
     PasswordHash VARCHAR(255) NOT NULL,
-    Role VARCHAR(20) DEFAULT 'cUSTOMER' -- Varsayılan olarak herkes 'Custemer' olarak kayıt olsun
+    Role VARCHAR(20) DEFAULT 'Customer' -- Varsayılan olarak herkes 'Custemer' olarak kayıt olsun
 );
 
 -- ESERLER TABLOSU
