@@ -25,3 +25,24 @@ CREATE TRIGGER trg_decrease_capasity
 AFTER INSERT ON Reservations
 FOR EACH ROW    -- Eklenen her bir satır için ayrı ayrı çalıştır
 EXECUTE FUNCTION decrease_event_capacity();
+
+
+-- KONTENJAN ARTTIRMA FONKSİYONU
+-- Rezervasyon iptal olduunda çalışacak mantık bloku
+CREATE OR REPLACE FUNCTION restore_event_capacity()
+RETURNS TRIGGER AS \$\$
+BEGIN
+    --Rezervasyon silindiğinde (OLD), o kişinin tuttuğu kontenjanı geri veriyoruz
+    UPDATE Events
+    SET CurrentCapacity = CurrentCapacity + OLD.ParticipantCount
+    WHERE EventID = OLD.EventID;
+
+    RETURN OLD;
+END;
+\$\$ LANGUAGE plpgsql;
+
+-- FONKSİYONU TETİKLEYECEK TRIGGER
+CREATE TRIGGER after_reservation_delete
+AFTER DELETE ON Reservations
+FOR EACH ROW
+EXECUTE FUNCTION restore_event_capacity();

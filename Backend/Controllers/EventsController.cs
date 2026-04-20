@@ -60,5 +60,26 @@ namespace Backend.Controllers
                 }
             }
         }
+
+        //DELETE: api/events/reservation/1
+        //Bir rezervasyonu iptal eder ve Trigger sayesinde kontenjanı otomatik geri yükler
+        [HttpDelete("reservation/{reservationId}")]
+        public async Task<IActionResult> CancelReservation(int reservationId)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                //Sadece DELETE atıyoruz, geri kalan tüm matematiksel hesapları PostgreSQL Trigger'ı yapıyor
+                var sql = "DELETE FROM Reservations WHERE ReservationID = @ReservationId;";
+
+                var rowsAffected = await connection.ExecuteAsync(sql, new { ReservationId = reservationId });
+
+                if(rowsAffected > 0)
+                {
+                    return Ok(new { Message = "Rezervasyon başarıyla iptal edildi ve kontenjan geri yüklendi! "});
+                }
+
+                return NotFound(new { Error = "Böyle bir rezervasyon bulunamadı." });
+            }
+        }
     }
 }
