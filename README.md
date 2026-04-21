@@ -14,9 +14,9 @@ Aşama 2: Veritabanı Geliştirme (SQL)
 
 Aşama 3: Backend ve İş Mantığı (API Katmanı)
 
-- [ ] Kullanıcı hesabı oluşturma, giriş yapma, profil ve şifre güncelleme uç noktalarının (endpoint) yazılması.
+- [x] Kullanıcı hesabı oluşturma, giriş yapma, profil ve şifre güncelleme uç noktalarının (endpoint) yazılması.
 - [ ] Atölye/etkinlik rezervasyon oluşturma, iptal etme, tarih veya katılımcı sayısı günceleme iş mantığının kurulması.
-- [ ] Etkinlik veya eser satın alıma, ödeme yöntemi seçimi algoritmalarının yazılması.
+- [x] Etkinlik veya eser satın alıma, ödeme yöntemi seçimi algoritmalarının yazılması.
 - [ ] İndirim kuponu kullanma ve kampanya mantığının sisteme entegre edilmesi.
 - [ ] Güvenlik kurallarının eklenmesi (Yalnızca giriş yapmış kullanıcıların yorum yapabilmesi, etkinlik yorumu için katılım şartı aranması vb.).
 

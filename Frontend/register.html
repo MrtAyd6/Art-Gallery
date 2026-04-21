@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Ol - Art Gallery</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h2>Art Gallery'ye Katıl</h2>
+
+        <div id="registerAlert" class="alert"></div>
+
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="fullName">Ad Soyad</label>
+                <input type="text" id="fullName" required placeholder="Örn: Murat Aydın">
+            </div>
+            <div class="form-group">
+                <label for="email">E-Posta</label>
+                <input type="email" id="email" required placeholder="ornek@ktu.edu.tr">
+            </div>
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <input type="password" id="password" required placeholder="En az 6 karakter">
+            </div>
+            <button type="submit" class="btn">Kayıt Ol</button>
+        </form>
+
+        <div class="auth-links">
+            Zaten hesabın var mı? <a href="login.html">Giriş Yap</a>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>
