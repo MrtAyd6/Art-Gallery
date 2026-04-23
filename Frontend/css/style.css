@@ -160,6 +160,9 @@ body{
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .card:hover {
@@ -185,6 +188,7 @@ body{
     cursor: pointer;
     width: 100%;
     transition: all 0.3s;
+    margin-top: auto;
 }
 
 .btn-outline:hover {

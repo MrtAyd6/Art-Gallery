@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atölyeler ve Etkinlikler</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="height: auto; display: block; background-color: #f4f4f9;">
+    
+    <nav class="navbar">
+        <div class="logo">Art Gallery</div>
+        <div class="user-menu">
+            <a href="index.html" style="color: white; text-decoration: none; margin-right: 15px; font-weight: 600;">Galeri</a>
+            <a href="profile.html" style="color: white; text-decoration: none; margin-right: 15px; font-weight: 600;">Profilim</a>
+            <span id="userNameDisplay">Yükleniyor...</span>
+            <button id="logoutBtn" class="btn-small">Çıkış Yap</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h2>Yaklaşan Sanat Atölyeleri</h2>
+        <p style="margin-bottom: 20px; color: #7f8c8d;">Kontenjanı dolmadan yerinizi ayırın!</p>
+
+        <div id="eventsGrid" class="grid-container">
+            <p>Etkinlikler yükleniyor...</p>
+        </div>
+
+        <hr style="margin: 40px 0; border: 1px solid #ddd;">
+
+        <h2>Mevcut Rezervasyonlarım</h2>
+        <div id="myReservationsGrid" class="grid-container">
+            <p>Rezervasyonlarınız kontrol ediliyor...</p>
+        </div>
+    </main>
+
+    <script src="js/events.js"></script>
+</body>
+</html>
