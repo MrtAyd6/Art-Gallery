@@ -29,6 +29,28 @@ namespace Backend.Controllers
             }
         }
 
+        
+        //GET: api/events/reservations/user/1
+        //Kullanıcının rezervasyonlarını listeler
+        [HttpGet("reservations/user/{userId}")]
+        public async Task<IActionResult> getUserReservations(int userID)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                var sql = @"
+                    SELECT r.ReservationID, r.EventID, r.ParticipantCount 
+                    FROM Events e
+                    JOIN Reservations r
+                    ON e.EventID = r.EventID
+                    WHERE r.UserID = @UserId;";
+
+                var events = await connection.QueryAsync<Reservation>(sql, new { UserId = userID });
+
+                return Ok(events);
+            }
+        }
+        
+
         //POST: api/events/reserve
         //Yeni bir rezervayon oluşturur ve Trigger'ı tetikler
         [HttpPost("reserve")]

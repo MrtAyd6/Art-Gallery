@@ -25,7 +25,6 @@ namespace Backend.Controllers
             using (var connection = new NpgsqlConnection(_connectionString))
             {
                 var sql = "INSERT INTO Favorites (UserID, ArtworkID) VALUES (@UserId, @ArtworkId);";
-                Console.WriteLine("---> DİKKAT! VERİTABANINA GİDEN SORGU: " + sql);
                 try
                 {
                     await connection.ExecuteAsync(sql, request);
