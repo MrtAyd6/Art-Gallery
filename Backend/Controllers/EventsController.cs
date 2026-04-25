@@ -29,6 +29,20 @@ namespace Backend.Controllers
             }
         }
 
+        //GET: api/events/1
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetEventById(int id)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                var sql = "SELECT * FROM Events WHERE EventID = @Id";
+                var ev = await connection.QueryFirstOrDefaultAsync(sql, new { Id = id });
+
+                if(ev == null) return NotFound();
+                return Ok(ev);
+            }
+        }
+
         
         //GET: api/events/reservations/user/1
         //Kullanıcının rezervasyonlarını listeler

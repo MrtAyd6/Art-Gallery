@@ -31,7 +31,7 @@ async function loadEvents() {
                 const isFull = ev.currentCapacity <= 0;
                 const buttonHtml = isFull
                     ? `<button class="btn-outline" style="color: gray; border-color: gray; cursor: not-allowed;" disabled>Doldu</button>`
-                    : `<button class="btn-outline" style="background-color: #27ae60; color: white; border: none;" onclick="reserveEvent(${ev.eventId})">Yer Ayırt</button>`;
+                    : `<button class="btn-outline" style="background-color: #27ae60; color: white; border: none;" onclick="viewEventDetail(${ev.eventId})">Detayları Görüntüle</button>`;
                 
                 card.innerHTML = `
                     <h3>${ev.title}</h3>
@@ -121,6 +121,10 @@ async function cancelReservation(reservationId) {
     }catch(error){
         alert('Sunucu hatası!');
     }
+}
+
+function viewEventDetail(id){
+    window.location.href = `event-detail.html?id=${id}`;
 }
 
 //Sayfa açıldığında iki listeyi de doldur
