@@ -56,6 +56,12 @@ async function loadComments() {
                 //Yıldızları oluştur
                 let stars = '⭐'.repeat(c.rating);
 
+                let adminReplyHtml = c.adminReply
+                    ? `<div style="background-color: #f0f8ff; padding: 10px; margin-top; border-left: 4px solid #3498db; border-radius: 4px;">
+                            <strong style="color: #2980b9;">Yönetici Yanıtı:</strong> <br> ${c.adminReply}
+                        </div>`
+                    :'';
+
                 list.innerHTML += `
                     <div style="border-bottom: 1px solid #eee; padding: 15px 0;">
                         <div style="display: flex; justify-content: space-between;">
@@ -63,7 +69,16 @@ async function loadComments() {
                             <span>${stars}</span>
                         </div>
                         <p style="margin-top: 10px; color: #555;">${c.commentText}</p>
-                        <small style="color: #999;">Tarih: ${new Date(c.createdAt).toLocaleDateString('tr-TR')}</small>
+
+                        ${adminReplyHtml}
+
+                        <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <small style="color: #999;">Tarih: ${new Date(c.createdAt).toLocaleDateString('tr-TR')}</small>
+
+                            <button class="btn-outline" style="padding: 5px 10px; font-size: 15px; cursor: pointer;" onclick="markUsefull(${c.commentId})">
+                                Faydalı Buldum (${c.usefulCount})
+                            </button>
+                        </div>
                     </div>
                 `;
             });
@@ -113,3 +128,20 @@ document.getElementById('commentForm').addEventListener('submit', async function
 
 //Sayfa açıldıında yorumları yükle
 loadComments();
+
+
+//Faydalı buldum oyu verme
+async function markUsefull(commentId) {
+    try{
+        const response = await fetch(`${API_BASE_URL}/comments/${commentId}/useful`, {
+            method: 'PUT'
+        });
+
+        if(response.ok){
+            loadComments();
+        }
+        
+    }catch(error){
+        console.error("Oy verilemedi:", error);
+    }
+}
