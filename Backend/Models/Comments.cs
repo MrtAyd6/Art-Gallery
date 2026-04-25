@@ -9,9 +9,9 @@ namespace Backend.Models
         public string CommentText { get; set; }
         public int Rating { get; set; }
         public int UsefulCount { get; set; }
-        public string AdminReply { get; set; }
+        public string? AdminReply { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public string UserName { get; set; }    //Yorumu yapanın adını göstermek için ekstra alan
+        public string? UserName { get; set; }    //Yorumu yapanın adını göstermek için ekstra alan
     }
 }

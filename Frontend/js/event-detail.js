@@ -33,3 +33,83 @@ function goToPurchase(id){
 }
 
 loadDetail();
+
+
+//Kullanıcı ID'sini al
+const userId = localStorage.getItem('userId');
+
+//Yorumları getirme
+async function loadComments() {
+    const list = document.getElementById('commentList');
+    try{
+        const response = await fetch(`${API_BASE_URL}/comments/event/${eventId}`);
+        if(response.ok){
+            const comments = await response.json();
+            list.innerHTML = '';
+
+            if(comments.length === 0){
+                list.innerHTML = '<p>Bu etkinlik için henüz yorum yapılmamış. İlk yorumu siz yapın!</p>';
+                return;
+            }
+
+            comments.forEach(c => {
+                //Yıldızları oluştur
+                let stars = '⭐'.repeat(c.rating);
+
+                list.innerHTML += `
+                    <div style="border-bottom: 1px solid #eee; padding: 15px 0;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <strong>${c.userName}</strong>
+                            <span>${stars}</span>
+                        </div>
+                        <p style="margin-top: 10px; color: #555;">${c.commentText}</p>
+                        <small style="color: #999;">Tarih: ${new Date(c.createdAt).toLocaleDateString('tr-TR')}</small>
+                    </div>
+                `;
+            });
+        }
+    }catch (error) {
+        list.innerHTML = '<p>Yorumlar yüklenirken hata oluştu.</p>';
+    }
+}
+
+//Yorum yapma
+document.getElementById('commentForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    
+    if(!userId){
+        alert("Yorum yapabilmek için giriş yapmalısınız!");
+        return;
+    }
+
+    const rating = document.getElementById('commentRating').value;
+    const text = document.getElementById('commentText').value;
+
+    try{
+        const response = await fetch(`${API_BASE_URL}/comments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId: parseInt(userId),
+                eventId: parseInt(eventId),
+                rating: parseInt(rating),
+                commentText: text
+            })
+        });
+
+        const data = await response.json();
+
+        if(response.ok){
+            alert('Yorumunuz başarıyla eklendi');
+            document.getElementById('commentForm').reset(); //Formu temizle
+            loadComments(); //Yorumları yenile
+        }else{
+            alert(data.error || 'Yorum eklenemedi.');
+        }
+    }catch(error){
+        alert('Sunucu hatası!');
+    }
+});
+
+//Sayfa açıldıında yorumları yükle
+loadComments();
