@@ -66,3 +66,20 @@ CREATE TABLE Orders (
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
     FOREIGN KEY (ArtworkID) REFERENCES Artworks(ArtworkID) ON DELETE CASCADE
 );
+
+-- YORUMLAR TABLOSU
+CREATE TABLE Comments (
+    CommentID SERIAL PRIMARY KEY,
+    UserID INT NOT NULL,
+    EventID INT NULL,   -- Eğer etkinlik yorumluysa
+    ArtworkID INT NULL, -- Eğer eser yorumluysa
+    CommentText TEXT NOT NULL,
+    Rating INT NOT NULL CHECK (Rating >= 1 AND Rating <= 5),    -- 1 ile 5 yıldız arası
+    UsefulCount INT DEFAULT 0, -- "Faydalı" oyu sayısı
+    AdminReply TEXT NULL,   -- Yöneticiin vereceği yanıt
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (EventID) REFERENCES Events(EventID),
+    FOREIGN KEY (ArtworkID) REFERENCES Artworks(ArtworkID) 
+);
