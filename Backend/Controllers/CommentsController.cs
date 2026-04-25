@@ -11,7 +11,7 @@ namespace Backend.Controllers
     {
         private readonly string _connectionString = "Host=localhost;Database=art_gallery_db;Username=postgres;Password=7350";
 
-        //GET: api/event/1
+        //GET: api/comments/event/1
         //Bir etkinliğin yorumlarunu getir
         [HttpGet("event/{eventId}")]
         public async Task<IActionResult> GetEventComments(int eventId)
@@ -31,7 +31,7 @@ namespace Backend.Controllers
             }
         }
 
-        //POST: api/   ****************************************************************************
+        //POST: api/comments
         //Yeni yorum ekle
         [HttpPost]
         public async Task<IActionResult> AddComment([FromBody] Comment comment)
@@ -60,6 +60,22 @@ namespace Backend.Controllers
                 if (result > 0 ) return Ok(new { message = "Yorumunuz başarıyla eklendi!"});
 
                 return BadRequest(new { error = "Yorum eklenirken bir ahata oluştu." });
+            }
+        }
+    
+
+        //Yoruma "faydalı buldum" oyu ver
+        [HttpPut("{commentId}/useful")]
+        public async Task<IActionResult> MarkAsUseful(int commentId)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                var sql = "UPDATE Comments SET UsefulCount = UsefulCount + 1 WHERE CommentId = @Id";
+                var result = await connection.ExecuteAsync(sql, new { Id = commentId });
+
+                if(result > 0) return Ok(new { message = "Oy kaydedildi."});
+
+                return BadRequest(new { error = "İşlem başarısız." });
             }
         }
     }
