@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Güvenli Ödeme - Art Gallery</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="display: flex; background-color: #f4f4f9;">
+
+    <div class="auth-container" style="margin: auto; margin-top: 50px;">
+        <h2>Ödeme ve Onay</h2>
+        <div id="purchaseSummary" style="margin-bottom:  20px; background: #fdfbfb; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+            </div>
+        
+        <form id="purchaseForm">
+            <div class="form-group">
+                <label>Ödeme Yöntemi</label>
+                <select id="paymentMethod" class="form-group" style="width: 100%; padding: 10px;">
+                    <option value="Kredi Kartı">Kredi Kartı</option>
+                    <option value="Banka Havalesi">Banka Havalesi</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Kart Numarası</label>
+                <input type="text" placeholder="1234 5678 9101 1121" required>
+            </div>
+        
+            <button type="submit" class="btn" style="background-color: #27ae60;">Ödemeyi Tamamla</button>
+        </form>
+    </div>
+
+    <script src="js/purchase.js"></script>
+    
+</body>
+</html>

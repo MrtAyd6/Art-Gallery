@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanat Galerisi</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="height: auto; display: block; background-color: #f4f4f9;"> 
+    <nav class="navbar">
+        <a href="index.html" class="logo" style="text-decoration: none; color: inherit;">Art Gallery</a>
+        <div class="user-menu">
+            <a href="events.html" style="color: #f1c40f; text-decoration: none; margin-right: 15px; font-weight: bold;">Atölyeler</a>
+            <span id="userNameDisplay">Yükleniyor...</span>
+            <button id="logoutBtn" class="btn-small">Çıkış Yap</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h2>Sergilenen Eserler</h2>
+
+        <div id="galleryGrid" class="grid-container">
+            <p>Eserler yükleniyor...</p>
+        </div>
+    </main>
+
+    <script src="js/gallery.js"></script>
+</body>
+</html>

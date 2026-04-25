@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="tr
+">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilim - Art Gallery</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="height: auto; display: block; background-color: #f4f4f9;">
+    
+    <nav class="navbar">
+        <a href="index.html" class="logo" style="text-decoration: none; color: inherit;">Art Gallery</a>
+        <div class="user-menu">
+            <a href="index.html" style="color: white; text-decoration: none; margin-right: 15px; font-weight: 600;">Galeriye Dön</a>
+            <a href="events.html" style="color: #f1c40f; text-decoration: none; margin-right: 15px; font-weight: bold;">Atölyeler</a>
+            <span id="userNameDisplay">Yükleniyor...</span>
+            <button id="logoutBtn" class="btn-small">Çıkış Yap</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h2>Kullanıcı Profilim</h2>
+
+        <div class="profile-layout">
+            <div class="profile-forms">
+                <div class="box">
+                    <h3>Bilgilerimi Güncelle</h3>
+                    <div id="profileAlert" class="alert"></div>
+                    <form id="updateProfileForm">
+                        <div class="form-group">
+                            <label>Ad Soyad</label>
+                            <input type="text" id="updateFullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-Posta</label>
+                            <input type="email" id="updateEmail" required>
+                        </div>
+                        <button type="submit" class="btn">Kaydet</button>
+                    </form>
+                </div>
+
+                <div class="box">
+                    <h3>Şifre Değiştir</h3>
+                    <div id="passwordAlert" class="alert"></div>
+                    <form id="updatePasswordForm">
+                        <div class="form-group">
+                            <label>Mevcut Şİfre</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Yeni Şifre</label>
+                            <input type="password" id="newPassword" required>
+                        </div>
+                        <button type="submit" class="btn">Şifreyi Güncelle</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="profile-favorites box">
+                <h3>❤️ Favori Eserlerim</h3>
+                <div id="favoritesGrid" class="grid-container" style="margin-top: 0;">
+                    <p>Favori eserleriniz yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/profile.js"></script>
+</body>
+</html>
