@@ -21,7 +21,7 @@ async function loadDetail() {
                     <option value="18:00">18:00 - 20:00</option>
                 </select>
                 <p><strong>Ücret:</strong> ${ev.price} ₺</p>
-                <button class="btn" onclick="goToPurchase(${ev.eventId})">Satın Almaya İlerle</button>
+                <button class="btn" onclick="goToPurchase(${ev.eventid})">Satın Almaya İlerle</button>
             </div>
         `;
     }catch(e){ content.innerHTML = "Hata oluştu."; }
