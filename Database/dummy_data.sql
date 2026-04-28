@@ -12,3 +12,6 @@ INSERT INTO Events (Title, EventDate, TotalCapacity, CurrentCapacity, Price) VAL
 INSERT INTO Artworks (Title, ArtistName, Description, Price, Category) VALUES
 ('Mavi Düşler', 'Elif Karaca', 'Tuval üzerine akrilik boya çalışması.', 1250.00, 'Tablo'),
 ('Modern Çizgiler', 'Can Mertoğlu', 'Siyah beyaz minimal dijital sanat.', 600.00, 'Dijital Sanat');
+
+-- İlk kampanya kodumuzu %20 indirimle sisteme ekliyoruz:
+INSERT INTO Coupons (Code, DiscountPercentage) VALUES ('ART2026', 20);

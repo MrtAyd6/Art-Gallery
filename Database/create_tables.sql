@@ -84,3 +84,12 @@ CREATE TABLE Comments (
     FOREIGN KEY (EventID) REFERENCES Events(EventID),
     FOREIGN KEY (ArtworkID) REFERENCES Artworks(ArtworkID) 
 );
+
+-- KUPONLAR TABLOSU
+CREATE TABLE Coupons (
+    CouponID SERIAL PRIMARY KEY,
+    Code VARCHAR(50) UNIQUE NOT NULL,
+    DiscountPercentage INT NOT CHECK (DiscountPercentage > 0 AND DiscountPercentage <= 100),
+    IsActive BOOLEAN DEFAULT TRUE
+);
+
