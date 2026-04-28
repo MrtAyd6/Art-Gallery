@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Yönetici Paneli - Art Gallery</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Tablo görünüşleri */
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); }
+        .admin-table th, .admin-table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        .admin-table th { background-color: #2c3e50; color: white; }
+        .admin-table tr:hover { background-color: #f1f2f6; }
+    </style>
+</head>
+<body  style="display: block; background-color: #f4f4f9;">
+    <nav class="navbar" style="background-color: #e74c3c;">
+        <div class="logo">Art Gallery | Yönetici Paneli</div>
+        <div class="user-menu">
+            <a href="index.html" style="color: white; text-decoration: none;">Siteye Dön</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h2 style="margin-bottom: 10px;">Sistem İstatistikleri ve Raporlar</h2>
+        <p style="color: #7f8c8d; margin-bottom: 30px;">Tüm etkinlik ve eser etkileşimleri gerçek zamanlı olarak aşağıda listelenmektedir.</p>
+        <div class="box" style="margin-bottom: 40px; padding: 20px;">
+            <h3 style="color: #2980b9;">Etkinlik / Atölye raporu</h3>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Etkinlik Adı</th>
+                        <th>Kayıtlı Kişi / Kapasite</th>
+                        <th>Doluluk Oranı</th>
+                        <th>Ortalama Puan</th>
+                    </tr>
+                </thead>
+                <tbody id="eventStatsBody">
+                    <tr><td colspan="4">Veriler yükleniyor</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="box" style="padding: 20px;">
+            <h3 style="color: #27ae60;">Eser Etkileşim raporu</h3>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Eser Adı</th>
+                        <th>Görüntülenme</th>
+                        <th>Favoriye Eklenme</th>
+                        <th>Yorum Sayısı</th>
+                    </tr>
+                </thead>
+                <tbody id="artworkStatsBody">
+                    <tr><td colspan="4">Veriler yükleniyor...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>

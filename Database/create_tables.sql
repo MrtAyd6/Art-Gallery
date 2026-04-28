@@ -17,7 +17,8 @@ CREATE TABLE Artworks (
     Description TEXT,   -- TEXT: VARCHAR'dan faRKLI OLARAK uzun pARAgraflar için idealdir
     ImageUrl VARCHAR(255),
     Price DECIMAL(10,2) NOT NULL,   -- DECİMAL: 10 basamklı, 2'si virgülden sonra
-    Category VARCHAR(50)
+    Category VARCHAR(50),
+    ViewsCount INT DEFAULT 0
 );
 
 -- ETKİNLİKLER VE ATÖLYELER TABLOSU
