@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Müşteri Destek - Art Gallery</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="display: block; background-color: #f4f4f9;">
+    <nav class="navbar">
+        <a href="index.html" class="logo" style=" text-decoration: none; color: inherit;">Art Gallery</a>
+        <div class="user-menu">
+            <a href="profile.html" style="color: white; text-decoration: none;">Profilim</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h2>Müşteri Destek Merkezi</h2>
+        <p style="color: #7d8c8d; margin-bottom: 20px;">Sorularınız veya talepleriniz için bize ulaşın.</p>
+
+        <div class="grid-container" style="grid-template-columns: 1fr 1fr;">
+            <div class="box">
+                <h3>Yeni Destek Talebi</h3>
+                <form id="supportForm" style="margin-top: 15px;">
+                    <div class="form-group">
+                        <label>Konu</label>
+                        <input type="text" id="subject" placeholder="Örn: İade Talebi, Atölye Bilgisi" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mesajınız</label>
+                        <textarea id="message" rows="5" placeholder="Size nasıl yardımcı olabiliriz?" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                    </div>
+                    <button type="submit" class="btn">Gönder</button>
+                </form>
+            </div>
+
+            <div class="box">
+                <h3>Geçmiş Taleplerim</h3>
+                <div id="ticketsList" style="margin-top: 15px;">
+                    <p>Yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/support.js"></script>
+</body>
+</html>
