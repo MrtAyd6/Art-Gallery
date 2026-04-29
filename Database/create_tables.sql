@@ -93,3 +93,14 @@ CREATE TABLE Coupons (
     IsActive BOOLEAN DEFAULT TRUE
 );
 
+-- DESTEK MESAJLARI TABLOSU
+CREATE TABLE SupportTickets (
+    TicketID SERIAL PRIMARY KEY,
+    UserID INT NOT NULL,
+    Subject VARCHAR(100) NOT NULL,
+    Message TEXT NOT NULL,
+    Status VARCHAR(20) DEFAULT 'Bekliyor',  -- Durum: Bekliyor veya Yanıtlandı
+    AdminReply TEXT NULL,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
