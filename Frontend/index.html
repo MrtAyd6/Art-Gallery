@@ -2,28 +2,71 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanat Galerisi</title>
+    <title>Art Gallery - Hoş Geldiniz</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* KArşılama sayfası kart tasarımları */
+        .landing-container{
+            display: flex;
+            height: 60vh;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            text-align: center;
+            padding: 20px;
+        }
+        .landing-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            width: 320px;
+            transition: transform 0.3s, border 0.3s;
+            text-decoration: none;
+            color: inherit;
+            border: 2px solid transparent;
+        }
+        .landing-card:hover {
+            transform: translateY(-10px);
+            border: 2px solid #2980b9;;
+        }
+        .landing-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
-<body style="height: auto; display: block; background-color: #f4f4f9;"> 
+<body style="display: block; background-color: #f4f4f9;">
     <nav class="navbar">
         <a href="index.html" class="logo" style="text-decoration: none; color: inherit;">Art Gallery</a>
-        <div class="user-menu">
-            <a href="events.html" style="color: #f1c40f; text-decoration: none; margin-right: 15px; font-weight: bold;">Atölyeler</a>
-            <span id="userNameDisplay">Yükleniyor...</span>
-            <button id="logoutBtn" class="btn-small">Çıkış Yap</button>
+        <div class="user-menu" id="welcomeText">
+            <a href="login.html" style="color: white; text-decoration: none;">Giriş Yap</a>
         </div>
     </nav>
 
-    <main class="container">
-        <h2>Sergilenen Eserler</h2>
+    <main>
+        <h1 style="text-align: center; margin-top: 60px; color: #2c3e50; font-size: 2.5rem;">Sanatın Merkezine Hoş Geldiniz</h1>
+        <p style="text-align: center; color: #7f8c8d; font-size: 1.2rem; margin-top: 10px;">Lütfen ilerlemek istediğiniz bölümü seçin</p>
 
-        <div id="galleryGrid" class="grid-container">
-            <p>Eserler yükleniyor...</p>
+        <div class="landing-container">
+            <a href="gallery.html" class="landing-card">
+                <div class="landing-icon">🎨</div>
+                <h2 style="color: #2c3e50;">Sanat Galerisi</h2>
+                <p style="color: #7f8c8d; margin-top: 15px; line-height: 1.5;">Eşsiz sanat eserlerini inceleyin, favorilerinize ekleyin ve düşüncelerinizi paylaşın.</p>
+                <button class="btn" style="margin-top: 25px; width: 100%;">Galeriyi Gez</button>
+            </a>
+
+            <a href="events.html" class="landing-card">
+                <div class="landing-icon">🛠️</div>
+                <h2 style="color: #2c3e50;">Sanat Atölyeleri</h2>
+                <p style="color: #7f8c8d; margin-top: 15px; line-height: 1.5;">Eğitimlere ve atölyelere katılın, alanında uzman isimlerle yeni yetenekler keşfedin.</p>
+                <button class="btn" style="margin-top: 25px; width: 100%;">Atölyeleri İncele</button>
+            </a>
         </div>
     </main>
 
-    <script src="js/gallery.js"></script>
+    <a href="support.html" class="floating-support-btn" title="Yardım ve Destek">💬</a>
+
+    <script src="js/index.js"></script>
 </body>
 </html>

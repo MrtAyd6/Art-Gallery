@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Etkinlik Bileti Al - Art Gallery</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="display: block; background-color: #f4f4f9;">
+    <nav class="navbar">
+        <a href="index.html" class="logo" style="text-decoration: none; color: inherit;">Art Gallery</a>
+    </nav>
+
+    <main class="container" style="max-width: 600px; margin-top: 50px;">
+        <h2>Etkinlik Kayıt ve Ödeme</h2>
+        <div class="box">
+            
+            <!-- Etkinlik özeti -->
+             <div id="purchaseSummary" style="font-size: 16px; line-height: 1.6; margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 6px;">
+                Yükleniyor...
+             </div>
+
+            <!-- Bilet sayısı seçimi -->
+            <div class="form-group" style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 6px;">
+                <label style="font-weight: bold; font-size: 16px; margin: 0;">Kişi Sayısı (Bilet Adedi):</label>
+                <input type="number" id="ticketCount" value="1" min="1" max="10" style="width: 80px; padding: 8px; font-size: 16px; text-align: center; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+
+             <!-- Kupon alanı -->
+              <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+                <input type="text" id="couponCode" placeholder="Kupon Kodu (Örn: ART2026)" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; text-transform: uppercase;">
+                <button type="button" onclick="applyCoupon()" class="btn-outline" style="width: auto;">Kullan</button>
+              </div>
+
+             <!-- Satınalım formu -->
+              <form id="eventPurchaseForm">
+
+                <!-- Ödeme yöntemi seçimi -->
+                 <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="font-weight: bold; font-size: 16px;">Ödeme Yöntemi</label>
+                    <div style="display: flex; gap: 20px; margin-top: 10px; background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 6px;">
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="paymentMethod" value="creditCard" checked>Kredi/Banka Kartı
+                        </label>
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="paymentMethod" value="eft">Havale / EFT
+                        </label>
+                    </div>
+                 </div>
+
+                 <!-- Kredi kartı alanı -->
+                <div id="creditCardSection">
+                    <div class="form-group">
+                        <label>Kart Üzerindeki İsim</label>
+                        <input type="text" id="ccName" placeholder="Ad Soyad">
+                    </div>
+                    <div class="form-group">
+                        <label>Kart Numarası</label>
+                        <input type="text" id="ccNumber" placeholder="0000 0000 0000 0000" maxlength="19">
+                    </div>
+                </div>
+
+                <div id="eftSection" style="display: none; background: #e8f8f5; border: 1px solid #a3e4d7; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                    <h4 style="color: #117864; margin-bottom: 10px;">Banka Hesap Bilgilerimiz</h4>
+                    <p style="font-size: 14px; margin-bottom: 5px;"><strong>Banka:</strong> Ziraat Bankası</p>
+                    <p style="font-size: 14px; margin-bottom: 5px;"><strong>Alıcı:</strong> Art Gallery Sanat DAnışmanlığı A.Ş.</p>
+                    <p style="font-size: 14px; margin-bottom: 5px; font-family: monospace;"><strong>IBAN:</strong> TR12 0001 0000 0000 0000 0000 00</p>
+
+                    <div class="form-group">
+                        <label>Ödemeyi Yapacak Gönderici Adı Soyadı</label>
+                        <input type="text" id="eftSenderName" placeholder="Havale/EFT yapacak kişinin tam adı">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%; background-color: #27ae60; font-size: 18px; padding: 12px;">Bileti Satın AL</button>
+              </form>
+        </div>
+    </main>
+    
+    <script src="js/event-purchase.js"></script>
+</body>
+</html>

@@ -5,7 +5,7 @@ const userId = localStorage.getItem('userId');
 const fullName = localStorage.getItem('fullName');
 
 //LocalStorageda ID yoksa loginde gönder
-if(!userId) {
+if(!userId || !fullName) {
     window.location.href = 'login.html';
 }else{
     document.getElementById('userNameDisplay').textContent = `Hoş geldin, ${fullName}`;
@@ -33,14 +33,22 @@ async function loadArtworks() {
             artworks.forEach(art => {
                 const card = document.createElement('div');
                 card.className = 'card';
+
+                //KArtı tıklanabilir yap
+                card.style.cursor = 'pointer';
+                card.style.transition = 'transform 0.2s';
+                card.onmouseover = () => card.style.transform = 'scale(1.02)';
+                card.onmouseout = () => card.style.transform = 'scale(1)';
+                card.onclick = () => window.location.href = `artwork-detail.html?id=${art.artworkId}`;
+
+                //Temsili görsel
                 card.innerHTML = `
-                    <h3>${art.title}</h3>
-                    <p>Sanatçı: ${art.artistName}</p>
-                    <p>Fiyat: ${art.price} ₺</p>
-                    <button class="btn-outline" onclick="addToFavorites(${art.artworkId})">
-                        ❤️ Favorilere Ekle
-                    </button>
+                    <img src="Images/artworks/${art.artworkId}.jpg" onerror="Images/default.jpg" alt="${art.title}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px; margin-bottom: 12px;">
+                    <h3 style="color: #2c3e50; margin-bottom: 8px;">${art.title}</h3>
+                    <p style="color: #7f8c8d; font-size: 14px; margin-bottom: 8px;">Sanatçı: ${art.artistName}</p>
+                    <p style="font-weight: bold; color: #27ae60; font-size: 16px;">${art.price} ₺</p>
                 `;
+
                 grid.appendChild(card);
             });
         }else{

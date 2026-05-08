@@ -15,3 +15,9 @@ INSERT INTO Artworks (Title, ArtistName, Description, Price, Category) VALUES
 
 -- İlk kampanya kodumuzu %20 indirimle sisteme ekliyoruz:
 INSERT INTO Coupons (Code, DiscountPercentage) VALUES ('ART2026', 20);
+
+-- 1 NUMARALI ETKİNLİĞE SEANS EKLEMESİ
+INSERT INTO EventSessions (EventId, StartTime, EndTime, CurrentCapacity) VALUES
+(1, '10:00', '12:00', 15),  -- Boş seans
+(1, '14:00', '16:00', 3),   -- Az yer kalmış seans
+(1, '18:00', '20:00', 0);   -- Tamamen dolu seans
