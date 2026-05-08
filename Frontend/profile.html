@@ -11,19 +11,15 @@
     
     <nav class="navbar">
         <a href="index.html" class="logo" style="text-decoration: none; color: inherit;">Art Gallery</a>
-        <div class="user-menu">
-            <a href="index.html" style="color: white; text-decoration: none; margin-right: 15px; font-weight: 600;">Galeriye Dön</a>
-            <a href="events.html" style="color: #f1c40f; text-decoration: none; margin-right: 15px; font-weight: bold;">Atölyeler</a>
-            <span id="userNameDisplay">Yükleniyor...</span>
-            <button id="logoutBtn" class="btn-small">Çıkış Yap</button>
-        </div>
+        <div class="user-menu" id="profileWelcomeText" style="color: white; font-size: 1rem; margin-right: 15px;">
+            </div>
     </nav>
 
-    <main class="container">
-        <h2>Kullanıcı Profilim</h2>
+    <main class="container" style="max-width: 1000px; margin-top: 50px;">
+        <h2 style="margin-bottom: 30px;">Profilim</h2>
 
-        <div class="profile-layout">
-            <div class="profile-forms">
+        <div class="profile-layout" style="display: flex; gap: 30px; align-items: flex-start;">
+            <div class="profile-forms" style="flex: 1; min-width: 300px;">
                 <div class="box">
                     <h3>Bilgilerimi Güncelle</h3>
                     <div id="profileAlert" class="alert"></div>
@@ -46,25 +42,85 @@
                     <form id="updatePasswordForm">
                         <div class="form-group">
                             <label>Mevcut Şİfre</label>
-                            <input type="password" id="currentPassword" required>
+                            <input type="password" id="currentPassword" required placeholder="******">
                         </div>
                         <div class="form-group">
                             <label>Yeni Şifre</label>
-                            <input type="password" id="newPassword" required>
+                            <input type="password" id="newPassword" required placeholder="******">
                         </div>
                         <button type="submit" class="btn">Şifreyi Güncelle</button>
                     </form>
                 </div>
+
+                <div class="box" style="margin-top: 20px; background-color: #fdf3f2; border: 1px solid #fadbd8; text-align: center; padding: 20px; border-radius: 8px;">
+
+                    <p style="color: #c0392b; margin-bottom: 12px; font-size: 14px;">Oturumunuzu güvenli şekilde sonlandırmak için:</p>
+                    <button id="profileLogoutBtn" class="btn" style="background-color: #e74c3c; width: 100%;">Çıkış Yap</button>
+                </div>
             </div>
 
-            <div class="profile-favorites box">
-                <h3>❤️ Favori Eserlerim</h3>
-                <div id="favoritesGrid" class="grid-container" style="margin-top: 0;">
-                    <p>Favori eserleriniz yükleniyor...</p>
+            <div class="profile-lists" style="flex: 2;">
+                <!-- Favoriler -->
+                <div class="box" style="margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 15px; color: #e74c3c;">❤️ Favori Eserlerim</h3>
+                    <div id="favoritesContainer" style="height: 400px; overflow-y: auto; padding-right: 15px; border: 1px solid #eee; border-radius: 8px; padding: 15px; background: #fafafa;">
+                        <div id="favoritesList">
+                            <p style="color: #7f8c8d;">Favorileriniz yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rezervasyonlar kısmı -->
+                <div class="box">
+                    <h3 style="margin-bottom: 15px; color: #27ae60;">Rezervasyonlarım</h3>
+
+                    <div id="reservationsContainer" style="max-height: 400px; overflow-y: auto; padding-right: 15px; border: 1px solid #eee; border-radius: 8px; padding: 15px; background: #fafafa;">
+                        <div id="reservationsList">
+                            <p style="color: #7f8c7d;">Biletleriniz yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="updateReservationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 10000; justify-content: center; align-items: center;">
+            <div style="background: white; padding: 25px; border-radius: 8px; width: 400px; max-width: 90%; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);">
+                <h3 style="margin-top: 0; color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 10px;">Rezervasyon Güncelle</h3>
+
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>Yeni Seans Seçimi</label>
+                    <select id="updateSessionSelect" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;"></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Bilet Adedi (Kişi Sayısı)</label>
+                    <input type="number" id="updateTicketCount" min="1" max="10" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                </div>
+
+                <p style="font-size: 18px; color: #27ae60; font-weight: bold; margin: 15px 0;">Yeni Tutar: <span id="updateTotalPrice">0</span> ₺</p>
+
+                <div id="updatePaymentSection" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                    <h4 style="color: #e74c3c; margin-bottom: 10px;">Ek Ödeme Gerekiyor: <span id="extraPaymentAmount">0</span> ₺</h4>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label style="font-size: 13px;">Kart Üzerindeki İsim</label>
+                        <input type="text" id="updateCcName" placeholder="Ad Soyad" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 13px;">Kart Numarası</label>
+                        <input type="text" id="updateCcNumber" placeholder="XXXX XXXX XXXX XXXX" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    </div>
+                </div>
+
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button class="btn" style="background-color: #95a5a6; width: auto;" onclick="closeUpdateModal()">Vazgeç</button>
+                    <button class="btn" id="saveUpdateBtn" style="width: auto;">Kaydet ve Güncelle</button>
                 </div>
             </div>
         </div>
     </main>
+
+    <a href="support.html" class="floating-support-btn" title="Yardım ve Destek">💬</a>
 
     <script src="js/profile.js"></script>
 </body>

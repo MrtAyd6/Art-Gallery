@@ -36,7 +36,6 @@ async function loadEvents() {
                 card.innerHTML = `
                     <h3>${ev.title}</h3>
                     <p style="color: #2980b9; font-weight: bold;">${new Date(ev.eventDate).toLocaleDateString('tr-TR')}</p>
-                    <p>Boş Kontenjan: <span style="font-weight: bold; font-size: 18px; color: ${isFull ? 'red' : 'green'};">${ev.currentCapacity}</span></p>
                     ${buttonHtml}
                 `;
                 grid.appendChild(card);
@@ -69,39 +68,6 @@ async function reserveEvent(eventId) {
     }
 }
 
-//Kullanıcının rezervasyonlarını yükle
-async function loadMyReservations() {
-    const grid = document.getElementById('myReservationsGrid');
-    try{
-        const response = await fetch(`${API_BASE_URL}/events/reservations/user/${userId}`);
-        if(response.ok){
-            const reservations = await response.json();
-            grid.innerHTML = '';
-
-            if(reservations.length === 0){
-                grid.innerHTML = '<p>Henüz bir etkinlie kayıt olmadınız.</p>';
-                return;
-            }
-
-            reservations.forEach(res => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <h3>Rezervasyon #${res.reservationId}</h3>
-                    <p>Etkinlik ID: ${res.eventId}</p>
-                    <p>Kişi Sayısı: ${res.participantCount}</p>
-                    <button class="btn-outline btn-danger" onclick="cancelReservation(${res.reservationId})">
-                        İptal Et
-                    </button>
-                `;
-                grid.appendChild(card);
-            });
-        }
-    }catch(error){
-        grid.innerHTML = '<p style="color:red;">rezervasyonlar yüklenemedi.</p>';
-    }
-}
-
 //Rezervasyon iptali
 async function cancelReservation(reservationId) {
     if(!confirm("Bu rezervasyonu iptal etmek istediğinize emin misiniz?")) return;
@@ -129,4 +95,3 @@ function viewEventDetail(id){
 
 //Sayfa açıldığında iki listeyi de doldur
 loadEvents();
-loadMyReservations();

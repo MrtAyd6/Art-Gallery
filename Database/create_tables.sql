@@ -104,3 +104,19 @@ CREATE TABLE SupportTickets (
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
+
+-- YORUM OYLARI TABLOSU
+CREATE TABLE CommentVotes (
+    UserId INT NOT NULL,
+    CommentId INT NOT NULL,
+    PRIMARY KEY (UserId, CommentId)
+);
+
+-- SEANSLAR TABLOSU
+CREATE TABLE EventSessions (
+    SessionId SERIAL PRIMARY KEY,
+    EventId INT NOT NULL,
+    StartTime VARCHAR(10) NOT NULL,
+    EndTime VARCHAR(10) NOT NULL,
+    CurrentCapacity INT NOT NULL
+);

@@ -25,7 +25,7 @@ namespace Backend.Controllers
             {
                 var sql = @"
                     UPDATE Users
-                    SET FullName = @FullName, Email = @Email, Role = @Role
+                    SET FullName = @FullName, Email = @Email
                     WHERE UserID = @Id;";
 
                 try
@@ -34,7 +34,6 @@ namespace Backend.Controllers
                     {
                         FullName = request.FullName,
                         Email = request.Email,
-                        Role = request.Role,
                         Id = id
                     });
 
