@@ -75,7 +75,7 @@ namespace Backend.Controllers
                     return Unauthorized(new { Error = "Şifre hatalı." });
                 }
 
-                return Ok(new { Message = "Giriş başarılı!", UserId = user.userid, FullName = user.fullname });
+                return Ok(new { Message = "Giriş başarılı!", UserId = user.userid, FullName = user.fullname, Role = user.Role });
             }
         }
     }

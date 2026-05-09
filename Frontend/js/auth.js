@@ -71,6 +71,8 @@ if(loginForm){
                 //Kullanıcı bilgilerini tarayıcı hafızasına kaydet (localstorage)
                 localStorage.setItem('userId', data.userId);
                 localStorage.setItem('fullName', data.fullName);
+                localStorage.setItem('eMail', email);
+                localStorage.setItem('role', data.role);
 
                 //Ana sayfaya yönlendir
                 setTimeout(() => { window.location.href = 'index.html'; }, 1500);
