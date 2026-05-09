@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr
-">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +19,16 @@
 
         <div class="profile-layout" style="display: flex; gap: 30px; align-items: flex-start;">
             <div class="profile-forms" style="flex: 1; min-width: 300px;">
+                <div class="box" style="margin-top: 0; background: linear-gradient(135deg, #2c3e50, #3498db); color: white; border: none; text-align: center; padding: 20px; border-radius: 8px;">
+                    <h3 style="color: white; margin-bottom: 5px;" id="profileRoleBadge">Standart Müşteri</h3>
+                    <p style="font-size: 13px; opacity: 0.9; margin-bottom: 15px;" id="profileRoleDesc">Sadece alım yapabilirsiniz.</p>
+
+                    <button id="applyPremiumBtn" class="btn" style="background-color: #f1c40f; color: #2c3e50; font-weight: bold; width: 100%; border: none;">Premium Ol (Satış Yap)</button>
+
+                    <button id="statsBtn" class="btn" style="background-color: #f1c40f; color: white; width: 100%; border: none; display: none;">İstatistiklerim ve Satışlar</button>
+                    <button id="addContentBtn" class="btn" style="background-color: #e67e22; color: white; width: 100%; border: none; margin-top: 10px; display: none;">Yeni İçerik Yükle</button>
+                </div>
+                
                 <div class="box">
                     <h3>Bilgilerimi Güncelle</h3>
                     <div id="profileAlert" class="alert"></div>
@@ -115,6 +124,31 @@
                 <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
                     <button class="btn" style="background-color: #95a5a6; width: auto;" onclick="closeUpdateModal()">Vazgeç</button>
                     <button class="btn" id="saveUpdateBtn" style="width: auto;">Kaydet ve Güncelle</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="premiumRequestModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 10000; justify-content: center; align-items: center;">
+            <div style="background: white; padding: 25px; border-radius: 8px; width: 450px; max-width: 90%; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);">
+                <h3 style="margin-top: 0; color: #f39c12; border-bottom: 1px solid #eee;padding-bottom: 10px;">Premium Hesap Başvurusu</h3>
+                <p style="font-size: 14px; color: #555; margin-bottom: 15px;">Sistemde satış yapabilmek için lütfrn rolünüzü ve portfolyonuzu bize iletin. Yöneticilerimiz en kısa sürede dönüş yapacaktır.</p>
+
+                <div class="form-group">
+                    <label>Başvurmak İstediğiniz Rol</label>
+                    <select id="requestedRoleType" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option value="Artist">Sanatçı (Eser Satışı)</option>
+                        <option value="WorkshopOwner">Atölye Sahibi (Etkinlik Satışı)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Kendinizi ve Çalışmalarınzı Anlatın</label>
+                    <textarea id="requestedMessage" placeholder="Web siteniz, sosyal medya hesaplarınız veya tecrübeleriniz..." style="width: 100%; height: 100px; padding: 10px; border-radius: 4px; border: 1px solid #ccc; resize: vertical;"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button class="btn" style="background-color: #95a5a6; width: auto;" onclick="document.getElementById('premiumRequestModal').style.display='none'">Vazgeç</button>
+                    <button class="btn" id="sendRequestBtn" style="background-color: #f39c12; width: auto; color: #fff;">Başvuruyu Gönder</button>
                 </div>
             </div>
         </div>

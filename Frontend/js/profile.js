@@ -5,6 +5,7 @@ const userId = localStorage.getItem('userId');
 let fullName = localStorage.getItem('fullName');
 let eMail = localStorage.getItem('eMail');
 
+
 if(!userId || !fullName){
     window.location.href = 'login.html';
 }else{
@@ -355,3 +356,86 @@ document.getElementById('saveUpdateBtn').addEventListener('click', async () => {
         alert("Güncelleme işlemi sırasında sunucu hatası oluştu.");
     }
 });
+
+async function getUserRole() {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+    const rol = await response.json();
+    if (response.ok){
+        return rol.role;
+    }
+
+    return null;
+}
+
+async function setupRoleUI(){
+    const badge = document.getElementById('profileRoleBadge');
+    const desc = document.getElementById('profileRoleDesc');
+    const applyBtn = document.getElementById('applyPremiumBtn');
+    const statsBtn = document.getElementById('statsBtn');
+    const addContentBtn = document.getElementById('addContentBtn');
+    const userRole = await getUserRole();
+    localStorage.setItem('role', userRole); 
+
+    if(userRole === 'Artist'){
+        badge.innerHTML = "Sanatçı";
+        desc.innerHTML = "Eserlerinizle galerimize renk katıyorsunuz.";
+        applyBtn.style.display = 'none';
+        statsBtn.style.display = 'block';
+        addContentBtn.style.display = 'block';
+    }
+    else if(userRole === 'WorkshopOwner'){
+        badge.innerHTML =  "Atölye Sahibi";
+        desc.innerHTML = "Eğitim ve etkinliklerinizi yönetebilrisiniz.";
+        applyBtn.style.display = 'none';
+        statsBtn.style.display = 'block';
+        addContentBtn.style.display = 'block';
+    }
+    else{
+        badge.innerHTML = "Standart Müşteri";
+        applyBtn.style.display = 'block';
+        statsBtn.style.display = 'none';
+        addContentBtn.style.display = 'none';
+    }
+}
+
+setupRoleUI();
+
+//PREMİUM BAŞVURU
+const applyBtn = document.getElementById('applyPremiumBtn');
+if(applyBtn){
+    applyBtn.addEventListener('click', () => {
+        document.getElementById('premiumRequestModal').style.display = 'flex';
+    });
+}
+
+const sendRequestBtn = document.getElementById('sendRequestBtn');
+if(sendRequestBtn){
+    sendRequestBtn.addEventListener('click', async () => {
+        const requestedRole = document.getElementById('requestedRoleType').value;
+        const message = document.getElementById('requestedMessage').value.trim();
+
+        if(!message){
+            alert("Lütfen kendinizi tanıtan kısa bir yazı yazın.");
+            return;
+        }
+
+        try{
+            const response = await fetch(`${API_BASE_URL}/users/request-role`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: parseInt(userId),
+                    requestedRole: requestedRole,
+                    message: message
+                })
+            });
+
+            if(response.ok){
+                alert("Harika! Başvurunuz yöneticilerimize ulaştı.");
+                document.getElementById('premiumRequestModal').style.display = 'none';
+            }else{
+                alert("Başvuru gönderilemedi");
+            }
+        }catch(e){ alert("Bağlantı hatası!"); }
+    });
+}
