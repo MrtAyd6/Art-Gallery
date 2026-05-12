@@ -5,7 +5,15 @@ const userId = localStorage.getItem('userId');
 
 let currentArtwork = null;
 
+//Görüntülenmeyi arttır
+async function incrementViews() {
+    const artworkId = new URLSearchParams(window.location.search).get('id');
+    await fetch(`${API_BASE_URL}/artworks/${artworkId}/increment-view`, { method: 'POST' });
+}
+
 async function loadArtworkDetails() {
+    incrementViews();
+
     try{
         //Mevcut API'den tüm eserleri çekip ID'Ye göre filtrele
         const response = await fetch(`${API_BASE_URL}/artworks`);

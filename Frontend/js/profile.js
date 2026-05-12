@@ -439,3 +439,138 @@ if(sendRequestBtn){
         }catch(e){ alert("Bağlantı hatası!"); }
     });
 }
+
+//Sanatçı: Yeni eser yükleme
+const addContentBtn = document.getElementById('addContentBtn');
+if(addContentBtn){
+    addContentBtn.addEventListener('click', () => {
+        document.getElementById('addArtworkForm').reset();  //Formu temizle
+        document.getElementById('addArtworkModal').style.display = 'flex';
+    });
+}
+
+document.getElementById('saveArtworkBtn').addEventListener('click', async () => {
+    
+    const title = document.getElementById('newArtTitle').value.trim();
+    const category = document.getElementById('newArtCategory').value.trim();
+    const desc = document.getElementById('newArtDesc').value.trim();
+    const price = document.getElementById('newArtPrice').value.trim();
+    const imageInput = document.getElementById('newArtImage');
+
+    if(!title || !category || !desc || !price || imageInput.files.length === 0){
+        alert("Lütfen tüm alanları doldurun ve bir fotoğraf seçin.");
+        return;
+    }
+
+    const saveBtn = document.getElementById('saveArtworkBtn');
+    saveBtn.innerHTML = "Yükleniyor...";
+    saveBtn.disabled = true;
+
+    //resim ve metinleri göndermek için FormData oluştur
+    const formData = new FormData();
+    formData.append("Title", title);
+    formData.append("Category", category);
+    formData.append("Description", desc);
+    formData.append("Price", price);
+    formData.append("ArtistId", userId);
+    formData.append("ArtistName", fullName);
+    formData.append("ImageFile", imageInput.files[0]);
+
+    try{
+        const response = await fetch(`${API_BASE_URL}/artworks/add-artwork`, {
+            method: 'POST',
+            body: formData  //FormData kullanırken 'Content-Type' yazılmaz
+        });
+
+        if(response.ok){
+            saveBtn.innerHTML = "✅ Başarıyla Yüklendi";
+            saveBtn.style.backgroundColor = "#27ae60";
+            
+            setTimeout(() => {
+                document.getElementById('addArtworkModal').style.display = 'none';
+                document.getElementById('addArtworkForm').reset();
+                window.location.reload();
+            }, 2000);
+        }else{
+            const data = await response.json();
+            alert(data.error || "Yükleme sırasında bir hata oluştu");
+            saveBtn.innerHTML = "Eseri Yükle";
+            saveBtn.disabled = false;
+        }
+    }catch (error){
+        alert("Sunucuya bağlanılamadı.");
+        saveBtn.innerHTML = "Eseri Yükle";
+        saveBtn.disabled = false;
+    }
+});
+
+//Sanatçı: İstatistikleri ve siparişleri yükleme
+const statsBtn = document.getElementById('statsBtn');
+if(statsBtn){
+    statsBtn.addEventListener('click', loadArtistDashboard);
+}
+
+async function loadArtistDashboard() {
+    document.getElementById('statsModal').style.display = 'flex';
+    const container = document.getElementById('statsContainer');
+
+    try{
+        const response = await fetch(`${API_BASE_URL}/artworks/artist/${userId}/dashboard`);
+        const data = await response.json();
+
+        container.innerHTML = `
+            <h3 style="color: #2980b9;">Eserlerimin Performansı</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                <tr style="background: #f4f4f4;">
+                    <th style="padding: 10px; border: 1px solid #ddd;">Eser Adı</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Görüntülenme</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Yorum</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Durum</th>
+                </tr>
+                ${data.artworks.map(a => `
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">${a.title}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${a.viewscount}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${a.commentcount}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+                            <span style="color: ${a.status === 'Sold' ? 'red' : 'green'} font-weight: bold;">${a.status === 'Sold' ? 'SATILDI' : 'SATIŞTA'}</span>
+                        </td>
+                    </tr>
+                `).join('')}
+            </table>
+            
+            <h3 style="color: #27ae60;">Gelen Siparişler</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background: #f4f4f4;">
+                    <th style="padding: 10px; border: 1px solid #ddd;">Alıcı</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Eser</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Durum</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">İşlem</th>
+                </tr>
+                ${data.orders.map(o => `
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">${o.buyername}<br><small>${o.buyeremail}</small></td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">${o.artworktitle}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;"><strong>${o.status}</strong></td>
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">
+                            ${o.status === 'Pending' ? `
+                                <button onclick="processOrder(${o.orderid}, 'Approved')" style="backgorund: #27ae60; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Onayla</button>
+                                <button onclick="processOrder(${o.orderid}, 'Rejected')" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Reddet</button>
+                            ` : '---'}
+                        </td>
+                    </tr>
+                `).join('')}
+            </table>
+        `;
+    }catch (e) { container.innerHTML = "Hata oluştu."; }
+}
+
+async function processOrder(orderId, decision) {
+    if(!confirm("Bu işlemi onaylıyor musunuz?")) return;
+    const response = await fetch(`${API_BASE_URL}/artworks/orders/${orderId}/process`, {
+        method: 'POST',
+        headers: {'Content-Type' : 'application/json'},
+        body: JSON.stringify({ decision })
+    });
+    if(response.ok) {loadArtistDashboard();}
+}

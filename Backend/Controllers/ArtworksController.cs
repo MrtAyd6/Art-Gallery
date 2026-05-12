@@ -1,5 +1,3 @@
-
-
 using Backend.Models;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +18,7 @@ namespace Backend.Controllers
         }
 
         //GET: api/artworks
+        //Eserleri listeler
         [HttpGet]
         public async Task<IActionResult> GetAllArtworks()
         {
@@ -32,6 +31,126 @@ namespace Backend.Controllers
                 var artworks = await connection.QueryAsync<Artwork>(sql);
 
                 return Ok(artworks);    //HTTP 200 başarılı yanıtı ile verileri dönüyoruz
+            }
+        }
+    
+        //POST: api/artworks/add-artwork
+        //Yeni eser ekleme
+        [HttpPost("add-artwork")]
+        public async Task<IActionResult> AddArtwork([FromForm] AddArtworkDto request)
+        {
+            if(request.ImageFile == null || request.ImageFile.Length == 0)
+                return BadRequest(new { error = "Lütfen bir eser fotoğrafı yükleyin." });
+
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                //Veritbanına kaydet ve oluşan ArtworkIdyi geri al
+                var sql = @"
+                    INSERT INTO Artworks (Title, Category, Description, Price, ArtistId, ArtistName)
+                    VALUES (@Title, @Category, @Description, @Price, @ArtistId, @ArtistName)
+                    RETURNING ArtworkId;";
+
+                var newArtworkId = await connection.ExecuteScalarAsync<int>(sql, new { 
+                    Title = request.Title,
+                    Category = request.Category,
+                    Description = request.Description,
+                    Price = request.Price, 
+                    ArtistId = request.ArtistId ,
+                    ArtistName = request.ArtistName
+                });
+
+                //Fotoğrafı frontend klasörüne {id}.jpg olarak kaydet
+                //bir üst dizine çıkıp frontend klasörüne gir
+                var frontendImagesPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Frontend", "Images", "artworks");
+
+                //Klasör yoksa oluştur
+                if(!Directory.Exists(frontendImagesPath))
+                    Directory.CreateDirectory(frontendImagesPath);
+
+                //Dosya adını oluştur (1.jpg)
+                var filePath = Path.Combine(frontendImagesPath, $"{newArtworkId}.jpg");
+
+                //Dosyayı diske yaz
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await request.ImageFile.CopyToAsync(stream);
+                }
+
+                return Ok(new { message = "Eser başarıyla yüklendi!", artworkId = newArtworkId });
+            }
+        }
+    
+        //POST: api/artworks/1/increment-view
+        //Görüntülenme sayısını arttır
+        [HttpPost("{id}/increment-view")]
+        public async Task<IActionResult> IncrementView(int id)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                var sql = "UPDATE Artworks SET ViewsCount = ViewsCount + 1 WHERE ArtworkId = @Id";
+                await connection.ExecuteAsync(sql, new { Id = id });
+                return Ok();
+            }
+        }
+    
+        //GET: api/artworks/artist/1/dashboard
+        //Sanatçının eserlerini getir
+        [HttpGet("artist/{artistId}/dashboard")]
+        public async Task<IActionResult> GetArtistDashboard(int artistId)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                //Eserlerin istatistikleri
+                var artworksSql = @"
+                    SELECT a.*,
+                    (SELECT COUNT(*) FROM Comments c WHERE c.ArtworkId = a.ArtworkId) as CommentCount
+                    FROM Artworks a WHERE a.ArtistId = @ArtistId";
+
+                //Bu sanatçının eserlerine gelen siparişler
+                var ordersSql = @"
+                    SELECT o.*, a.Title as ArtworkTitle, u.FullName as BuyerName, u.Email as BuyerEmail
+                    FROM Orders o
+                    JOIN Artworks a ON o.ArtworkId = a.ArtworkId
+                    JOIN Users u ON o.UserId = u.UserId
+                    WHERE a.ArtistId = @ArtistId
+                    ORDER BY o.OrderDate DESC";
+
+                var artworks = await connection.QueryAsync<dynamic>(artworksSql, new { ArtistId = artistId });
+                var orders = await connection.QueryAsync<dynamic>(ordersSql, new { ArtistId = artistId });
+
+                return Ok(new { artworks, orders });
+            }
+        }
+
+        //POST: api/artworks/orders/1/process
+        //Sipariş onay red
+        [HttpPost("orders/{orderId}/process")]
+        public async Task<IActionResult> ProcessOrder(int orderId, [FromBody] ProcessOrderDto data)
+        {
+            string decision = data.Decision;
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                using (var trans = await connection.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        //Siparişi güncelle
+                        await connection.ExecuteAsync("UPDATE Orders SET Status = @Status WHERE OrderId = @Id", new { Status = decision, Id = orderId });
+
+                        //Eğer onaylandıysa 'sold' yap
+                        if(decision == "Approved")
+                        {
+                            var artworkId = await connection.ExecuteScalarAsync<int>("SELECT ArtworkId FROM Orders WHERE OrderId = @Id", new { Id = orderId });
+                            await connection.ExecuteAsync("UPDATE Artworks SET Status = 'Sold' WHERE ArtworkId = @Id", new { Id = artworkId });
+                        }
+
+                        await trans.CommitAsync();
+                        return Ok(new { message = "İşlem başarıyla tamamlandı." });
+                    }catch (Exception ex) {await trans.RollbackAsync(); return BadRequest(ex.Message); }
+                }
             }
         }
     }
