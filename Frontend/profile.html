@@ -152,6 +152,57 @@
                 </div>
             </div>
         </div>
+
+        <div id="addArtworkModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 10000; justify-content: center; align-items: center;">
+            <div style="background: white; padding: 25px; border-radius: 8px; width: 500px; max-width: 90%; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);">
+                <h3 style="margin-top: 0; color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 10px;">➕ Yeni Eser Yükle</h3>
+
+                <form id="addArtworkForm">
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>Eser Adı</label>
+                        <input type="text" id="newArtTitle" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                    </div>
+
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>Eser Kategorisi</label>
+                        <input type="text" id="newArtCategory" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Açıklama / Hikayesi</label>
+                        <textarea id="newArtDesc" required style="width: 100%; height: 80px; padding: 10px; border-radius: 4px; border: 1px solid #ccc; resize: vertical;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fiyat (₺)</label>
+                        <input type="number" id="newArtPrice" min="1" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Eser Fotoğrafı (.jpg, .png)</label>
+                        <input type="file" id="newArtImage" accept="image/*" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; background: #f9f9f9;">
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                        <button type="button" class="btn" style="background-color: #95a5a6; width: auto;" onclick="document.getElementById('addArtworkModal').style.display='none'">Vazgeç</button>
+                        <button type="button" class="btn" id="saveArtworkBtn" style="background-color: #27ae60; width: auto;">Eseri Yükle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="statsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 10000; justify-content: center; align-items: center;">
+            <div style="background: white; padding: 25px; border-radius: 8px; width: 900px; max-width: 95%; max-height: 95vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px;">
+                    <h2 style="margin: 0; color: #2c3e50;">Satış ve İStatistik Paneli</h2>
+                    <button onclick="document.getElementById('statsModal').style.display='none'" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+
+                <div id="statsContainer">
+                    <p>Veriler hazırlanıyor...</p>
+                </div>
+            </div>
+        </div>
     </main>
 
     <a href="support.html" class="floating-support-btn" title="Yardım ve Destek">💬</a>
