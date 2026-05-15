@@ -72,8 +72,17 @@ paymentRadios.forEach(radio => {
 });
 
 //Ödemeyi tamamla
-document.getElementById('artworkPurchaseForm').addEventListener('submit', function(e) {
+document.getElementById('artworkPurchaseForm').addEventListener('submit', async function(e) {
     e.preventDefault();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const artworkId = urlParams.get('id');
+    const userId = localStorage.getItem('userId');
+
+    if(!userId){
+        alert("Lütfen satın alma işlemi için önce giriş yapın.");
+        return;
+    }
 
     const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
 
@@ -89,13 +98,43 @@ document.getElementById('artworkPurchaseForm').addEventListener('submit', functi
         const eftSender = document.getElementById('eftSenderName').value.trim();
         if(!eftSender){
             alert("Lütfen havale yapacak kişinin adını giriniz.");
+            return;
         }
     }
 
-    const methodText = selectedMethod === 'creditCard' ? "Kredi Kartı" : "Havale/EFT";
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerText;
+    submitBtn.innerText = "İşleniyor...";
+    submitBtn.disabled = true;
 
-    alert(`Siparişiniz alındı!\n\n"${artworkTitle}" eseri için ${currentPrice} ₺ tutarındaki işleminiz ${methodText} yöntemiyle başarıyla kaydedildi`);
-    window.location.href = 'profile.html';
+    try{
+        const response = await fetch(`${API_BASE_URL}/artworks/purchase`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId: parseInt(userId),
+                artworkId: parseInt(artworkId),
+                paymentMethod: selectedMethod
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok){
+            const methodText = selectedMethod === 'creditCart' ? "Kredi Kartı" : "Havale/EFT";
+
+            alert(`Siparişiniz alındı!\n\n"${artworkTitle}" eseri için ${currentPrice} ₺ tutarındaki işleminiz ${methodText} yöntemiyle başarıyla kaydedildi.\n\nDurum: ${data.message}`);
+            window.location.href = 'profile.html';
+        }else{
+            alert(data.error || "Sipariş oluşturulurken bir hata meydana geldi.");
+            submitBtn.innerText = originalBtnText;
+            submitBtn.disabled = false;
+        }
+    }catch(error){
+        alert("Sunucuya bağlanılamdı." + `${error}`);
+        submitBtn.innerText = originalBtnText;
+        submitBtn.disabled = false;
+    }
 });
 
 loadArtworkData();

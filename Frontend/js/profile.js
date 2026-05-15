@@ -504,65 +504,144 @@ document.getElementById('saveArtworkBtn').addEventListener('click', async () => 
     }
 });
 
-//Sanatçı: İstatistikleri ve siparişleri yükleme
+//İstatistikleri ve siparişleri yükleme
 const statsBtn = document.getElementById('statsBtn');
 if(statsBtn){
-    statsBtn.addEventListener('click', loadArtistDashboard);
+    statsBtn.addEventListener('click', loadDashboard);
 }
 
-async function loadArtistDashboard() {
+async function loadDashboard() {
     document.getElementById('statsModal').style.display = 'flex';
     const container = document.getElementById('statsContainer');
+    container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">Veriler yükleniyor...</p>';
+    const userRole = await getUserRole();
+    
+    if(userRole === 'Artist'){
+        try{
+            const response = await fetch(`${API_BASE_URL}/artworks/artist/${userId}/dashboard`);
+            const data = await response.json();
+
+            container.innerHTML = `
+                <h3 style="color: #2980b9;">Eserlerimin Performansı</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                    <tr style="background: #f4f4f4;">
+                        <th style="padding: 10px; border: 1px solid #ddd;">Eser Adı</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Görüntülenme</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Yorum</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Durum</th>
+                    </tr>
+                    ${data.artworks.map(a => `
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${a.title}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${a.viewscount}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${a.commentcount}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+                                <span style="color: ${a.status === 'Sold' ? 'red' : 'green'} font-weight: bold;">${a.status === 'Sold' ? 'SATILDI' : 'SATIŞTA'}</span>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </table>
+            
+                <h3 style="color: #27ae60;">Gelen Siparişler</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="background: #f4f4f4;">
+                        <th style="padding: 10px; border: 1px solid #ddd;">Alıcı</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Eser</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Durum</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">İşlem</th>
+                    </tr>
+                    ${data.orders.map(o => `
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${o.buyername}<br><small>${o.buyeremail}</small></td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${o.artworktitle}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;"><strong>${o.status}</strong></td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">
+                                ${o.status === 'Pending' ? `
+                                    <button onclick="processOrder(${o.orderid}, 'Approved')" style="background: #27ae60; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Onayla</button>
+                                    <button onclick="processOrder(${o.orderid}, 'Rejected')" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Reddet</button>
+                                ` : '---'}
+                            </td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }catch (e) { container. innerHTML = "Hata oluştu."; }
+    }
+    else if(userRole === 'WorkshopOwner'){
+        
+        try{
+            
+            const response = await fetch(`${API_BASE_URL}/events/workshop/${userId}/dashboard`);
+            const data = await response.json();
+            console.log(userRole);
+            container.innerHTML = `
+                <h3 style="color: #2980b9;">Etkinlik ve Seans Durumları</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                    <tr style="background: #f4f4f4;">
+                        <th style="padding: 10px; border: 1px solid #ddd;">Etkinlik Adı</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Toplam Seans</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Boş Kontenjan</th>
+                    </tr>
+                    ${data.events.map(e => `
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;"><strong>${e.title}</strong></td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${e.totalsessions || 0}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+                                <span style="color: ${e.totalremainingcapacity <= 5 ? '#e74c3c' : '#27ae60'}; font-wight: bold">
+                                    ${e.totalremainingcapacity || 0} Kişi
+                                </span>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </table>
+            
+                <h3 style="color: #27ae60;">Yorumlar ve Yanıtlar</h3>
+                <div>
+                    ${data.comments.length === 0 ? '<p>Henüz etkinliklerinize yorum yapılmamış.</p>' :
+                    data.comments.map(c => `
+                        <div style="background: #fdfdfd; padding: 15px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid #f39c12;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <strong>${c.username} <span style="color: #f1c40f;">${'*'.repeat(c.rating)}</span></strong>
+                                <small style="color: #999;">${new Date(c.createdat).toLocaleDateString('tr-TR')} - ${c.eventtitle}</small>
+                            </div>
+                            <p style="margin: 5px 0 10px 0; color: #555;">"${c.commenttext}"</p>
+                            
+                            ${c.ownerreply
+                                ? `<div style="background: #eafaf1; padding: 10px; border-radius: 4px; border-left: 3px solid #27ae60; font-size: 13px;">
+                                        <strong>Sizin Yanıtınız:</strong> ${c.ownerreply}
+                                    </div>`
+                                : `<div style="display: flex; gap: 10px; margin-top: 10px;">
+                                        <input type="text" id="replyInput_${c.commentid}" placeholder="Yanıt verin..." style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius:4px;">
+                                        <button onclick="submitReply(${c.commentid})" style="background: #2980b9; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Yanıtla</button>
+                                    </div>`
+                            }
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }catch (e) { container.innerHTML = "Hata oluştu." + e; }
+    }
+};
+
+//Yorum yanıtlama Fonksiyonu
+window.submitReply = async function(commentId) {
+    const replyText = document.getElementById(`replyInput_${commentId}`).value.trim();
+    if(!replyText) { alert("Lütfen bir yanıt yazın."); return; }
 
     try{
-        const response = await fetch(`${API_BASE_URL}/artworks/artist/${userId}/dashboard`);
-        const data = await response.json();
+        const response = await fetch(`${API_BASE_URL}/events/comments/${commentId}/reply`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ replyText: replyText })
+        });
 
-        container.innerHTML = `
-            <h3 style="color: #2980b9;">Eserlerimin Performansı</h3>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
-                <tr style="background: #f4f4f4;">
-                    <th style="padding: 10px; border: 1px solid #ddd;">Eser Adı</th>
-                    <th style="padding: 10px; border: 1px solid #ddd;">Görüntülenme</th>
-                    <th style="padding: 10px; border: 1px solid #ddd;">Yorum</th>
-                    <th style="padding: 10px; border: 1px solid #ddd;">Durum</th>
-                </tr>
-                ${data.artworks.map(a => `
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd;">${a.title}</td>
-                        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${a.viewscount}</td>
-                        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${a.commentcount}</td>
-                        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
-                            <span style="color: ${a.status === 'Sold' ? 'red' : 'green'} font-weight: bold;">${a.status === 'Sold' ? 'SATILDI' : 'SATIŞTA'}</span>
-                        </td>
-                    </tr>
-                `).join('')}
-            </table>
-            
-            <h3 style="color: #27ae60;">Gelen Siparişler</h3>
-            <table style="width: 100%; border-collapse: collapse;">
-                <tr style="background: #f4f4f4;">
-                    <th style="padding: 10px; border: 1px solid #ddd;">Alıcı</th>
-                    <th style="padding: 10px; border: 1px solid #ddd;">Eser</th>
-                    <th style="padding: 10px; border: 1px solid #ddd;">Durum</th>
-                    <th style="padding: 10px; border: 1px solid #ddd;">İşlem</th>
-                </tr>
-                ${data.orders.map(o => `
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd;">${o.buyername}<br><small>${o.buyeremail}</small></td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">${o.artworktitle}</td>
-                        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;"><strong>${o.status}</strong></td>
-                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">
-                            ${o.status === 'Pending' ? `
-                                <button onclick="processOrder(${o.orderid}, 'Approved')" style="backgorund: #27ae60; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Onayla</button>
-                                <button onclick="processOrder(${o.orderid}, 'Rejected')" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Reddet</button>
-                            ` : '---'}
-                        </td>
-                    </tr>
-                `).join('')}
-            </table>
-        `;
-    }catch (e) { container.innerHTML = "Hata oluştu."; }
+        if(response.ok){
+            alert("Yanıtınız başarıyla eklendi!");
+            loadDashboard();
+        }else{
+            alert("Yanıt eklenirken bir hata oluştu.");
+        }
+    }catch(e) { alert("Sunucu bağlantı hatası!"); }
 }
 
 async function processOrder(orderId, decision) {
@@ -572,5 +651,53 @@ async function processOrder(orderId, decision) {
         headers: {'Content-Type' : 'application/json'},
         body: JSON.stringify({ decision })
     });
-    if(response.ok) {loadArtistDashboard();}
+    if(response.ok) {loadDashboard();}
 }
+
+//Siparişlerimi yükle
+async function loadOrders() {
+    const list = document.getElementById('ordersList');
+    try{
+        const response = await fetch(`${API_BASE_URL}/artworks/user/${userId}/orders`);
+        const orders = await response.json();
+
+        if(orders.length === 0){
+            list.innerHTML = '<div style="padding: 15px; border: 1px solid #eee; border-radius: 6px; background: #fdfdfd; text-align: center; color: #7f8c8d;">Henüz satın aldığınız bir eser bulunmuor.</div>';
+            return;
+        }
+
+        list.innerHTML = orders.map( o => {
+            let statusBadge = '';
+            let borderColor = '';
+
+            //Duruma göre metin ve renk
+            if(o.status === 'Pending'){
+                statusBadge = '<span style="background: #fdf2e9; color: #e67e22; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Onay Bekliyor</span>';
+                borderColor = '#e67e22';
+            }else if(o.status === 'Approved'){
+                statusBadge = '<span style="background: #e8f8f5; color: #27ae60; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Onaylandı</span>';
+                borderColor = '#27ae60';
+            }else if(o.status === 'Rejected'){
+                statusBadge = '<span style="background: #fdedec; color: #e74c3c; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Onaylandı</span>';
+                borderColor = '#e74c3c';
+            }
+
+            return `
+                <div style="background: #fff; padding: 15px; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid ${borderColor}; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0; color: #2c3e50;">${o.title}</h4>
+                        ${statusBadge}
+                    </div>
+                    <p style="margin: 5px 0; font-size: 14px; color: #555;"><strong>Tutar:</strong> ${o.price} ₺</p>
+                    <p style="margin: 0; font-size: 12px; color: #999;">Sipariş Tarihi: ${new Date(o.orderdate).toLocaleDateString('tr-TR')}</p>
+                </div>
+            `;
+        }).join('');
+    }catch (e){
+        list.innerHTML = '<p style="color: red;">Siparişler yüklenirken hata oluştu.</p>';
+    }
+}
+
+loadOrders();
+
+//
