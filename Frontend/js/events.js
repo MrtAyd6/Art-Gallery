@@ -27,6 +27,7 @@ async function loadEvents() {
             events.forEach(ev => {
                 const card = document.createElement('div');
                 card.className = 'card';
+                card.style.position = 'relative';
                 //Eğer kontenjan sıfırsa butonu pasif yapıp rengini değiştiriyoruz
                 const isFull = ev.currentCapacity <= 0;
                 const buttonHtml = isFull
@@ -37,6 +38,10 @@ async function loadEvents() {
                     <h3>${ev.title}</h3>
                     <p style="color: #2980b9; font-weight: bold;">${new Date(ev.eventDate).toLocaleDateString('tr-TR')}</p>
                     ${buttonHtml}
+                    <button onclick="event.stopPropagation(); toggleEventCompare(${ev.eventId})" id="compEventBtn_${ev.eventId}" title="Karşılaştırmaya Ekle" style="position: absolute; top: 15px; right: 15px; background: #f4f6f7; border: 1px solid #bdc3c7; color: #7f8c8d; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 16px; transition: 0.3s;">
+                        ⚖️
+                    </button>
+                    
                 `;
                 grid.appendChild(card);
             });
@@ -92,6 +97,65 @@ async function cancelReservation(reservationId) {
 function viewEventDetail(id){
     window.location.href = `event-detail.html?id=${id}`;
 }
+
+//Etkinlik karşılaştırma
+let compareEventList = JSON.parse(localStorage.getItem('compareEventList')) || [];
+
+function toggleEventCompare(eventId){
+    const btn = document.getElementById(`compEventBtn_${eventId}`);
+
+    //Eğer listede varsa çıkar
+    if(compareEventList.includes(eventId)){
+        compareEventList = compareEventList.filter(id => id !== eventId);
+        if(btn){
+            btn.style.background = '#f4f6f7';
+            btn.style.color = '#7f8c8d';
+            btn.style.borderColor = '#bdc3c7';
+        }
+    }
+    //Eğer listede yoksa ekle
+    else{
+        if(compareEventList.length >= 3){
+            alert("En fazla 3 etkinliği yan yana karşılaştırabilirsiniz.");
+            rerturn;
+        }
+        compareEventList.push(eventId);
+        if(btn){
+            btn.style.background = '#27ea60';
+            btn.style.color = '#white';
+            btn.style.borderColor = '#27ae60';
+        }
+    }
+
+    localStorage.setItem('compareEventList', JSON.stringify(compareEventList));
+    updateEventCompareUI();
+}
+
+function updateEventCompareUI(){
+    const floatingBtn = document.getElementById('compareEventFloatingBtn');
+    const countSpan = document.getElementById('compareEventCount')
+
+    if(!floatingBtn) return;
+
+    if(compareEventList.length > 0){
+        floatingBtn.style.display = 'block';
+        countSpan.innerText = compareEventList.length;
+
+        compareEventList.forEach(id => {
+            const btn = document.getElementById(`compEventBtn_${id}`);
+            if(btn){
+                btn.style.background = '#27ae60';
+                btn.style.color = 'white';
+                btn.style.borderColor = '#27ae60';
+            }
+        });
+    }else{
+        floatingBtn.style.display ='none';
+    }
+}
+
+//sayfa yüklendiğinde kontrol et
+document.addEventListener('DOMContentLoaded', updateEventCompareUI);
 
 //Sayfa açıldığında iki listeyi de doldur
 loadEvents();

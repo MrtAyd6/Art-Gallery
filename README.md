@@ -63,9 +63,9 @@
 
 11 - Eser ve Etkinlik Karşılaştırma
 
-- [ ] Birden fazla etkinliği tarih, ücret ve kontenjan açısından karşılaştırma
-- [ ] Birden fazla eseri kategori, fiyat ve sanatçı açısından karşılaştırma
-- [ ] Karşılaştırma sonuçlarını kaydetme
+- [x] Birden fazla etkinliği tarih, ücret ve kontenjan açısından karşılaştırma
+- [x] Birden fazla eseri kategori, fiyat ve sanatçı açısından karşılaştırma
+- [x] Karşılaştırma sonuçlarını kaydetme
 
 12 - Yorum Ekleme
 

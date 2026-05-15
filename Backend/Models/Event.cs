@@ -9,6 +9,8 @@ namespace Backend.Models
         public DateTime EventDate { get; set; }
         public decimal Price { get; set; }
         public string Description { get; set; }
+        public int OrganizerId { get; set; }
+        public string OrganizerName { get; set; }
 
         public List<EventSession> Sessions { get; set; } = new List<EventSession>();
     }

@@ -48,6 +48,10 @@ async function loadArtworks() {
                         <h3 style="color: #2c3e50; margin-bottom: 8px;">${art.title}</h3>
                         <p style="color: #7f8c8d; font-size: 14px; margin-bottom: 8px;">Sanatçı: ${art.artistName}</p>
                         <p style="font-weight: bold; color: #27ae60; font-size: 16px;">${art.price} ₺</p>
+                        
+                        <button onclick="event.stopPropagation(); toggleCompare(${art.artworkId})" id="compBtn_${art.artworkId}" title="Karşılaştırmaya Ekle" style="position: ablolute; bottom: 15px; right: 15px; background: #f4f6f7; border: 1px solid #bdc3c7; color: #7f8c8d; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 16px; transition: 0.3s;">
+                            ⚖️
+                        </button>
                     `;
 
                     grid.appendChild(card);
@@ -81,6 +85,64 @@ async function addToFavorites(artworkId) {
         alert('Sunucu hatası!');
     }
 }
+
+//Eser karşılaştırma
+let compareList = JSON.parse(localStorage.getItem('compareList')) || [];
+
+function toggleCompare(artworkId){
+    const btn = document.getElementById(`compBtn_${artworkId}`);
+
+    //Eğer listede varsa çıkar
+    if(compareList.includes(artworkId)){
+        compareList = compareList.filter(id => id != artworkId);
+        if(btn){
+            btn.style.background = '#f4f6f7';
+            btn.style.color = '#7f8c8d';
+            btn.style.borderColor = '#bdc3c7';
+        }
+    }
+    //Eğer listede yoksa ekle
+    else{
+        if(compareList.length >= 8){
+            alert("En fazla 4 eseri yan yana karşılaştırabilirsiniz.");
+            return;
+        }
+        compareList.push(artworkId);
+        if(btn){
+            btn.style.background = '#2980b9';
+            btn.style.color = 'white';
+            btn.style.borderColor = '#2980b9';
+        }
+    }
+
+    //Hafızayı ve butonn güncele
+    localStorage.setItem('compareList', JSON.stringify(compareList));
+    updateCompareUI();
+}
+
+function updateCompareUI(){
+    const floatingBtn = document.getElementById('compareFloatingBtn');
+    const countSpan = document.getElementById('compareCount');
+
+    if(compareList.length > 0){
+        floatingBtn.style.display = 'block';
+        countSpan.innerText = compareList.length;
+
+        compareList.forEach(id => {
+            const btn = document.getElementById(`compBtn_${id}`);
+            if(btn){
+                btn.style.background = '#2980b9';
+                btn.style.color = 'white';
+                btn.style.borderColor = '#2980b9';
+            }
+        });
+    }else{
+        floatingBtn.style.display = 'none';
+    }
+}
+
+//Sayfa yüklendiğinde butonu kontrol et
+document.addEventListener('DOMContentLoaded', updateCompareUI);
 
 //Sayfa açıldığında eserleri yüklemeyi başlat
 loadArtworks();
