@@ -43,10 +43,14 @@ namespace Backend.Controllers
                 if(ev == null) return NotFound("Etkinlik bulunamadı.");
 
                 //Etkinliğe ait seansları al
-                var sessionsQuery = "SELECT * FROM EventSessions WHERE EventId = @Id ORDER BY StartTime";
+                var sessionsQuery = "SELECT * FROM EventSessions WHERE EventId = @Id ORDER BY SessionDate, StartTime";
                 var sessions = await connection.QueryAsync<EventSession>(sessionsQuery, new { Id = id });
 
+                var organizerNameSql = "SELECT FullName FROM Users WHERE UserId = @Id";
+                var organizerName = await connection.QueryFirstOrDefaultAsync<string>(organizerNameSql, new { Id = ev.OrganizerId });
+
                 ev.Sessions = sessions.ToList();
+                ev.OrganizerName = organizerName;
 
                 return Ok(ev);
             }

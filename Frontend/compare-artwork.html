@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Eser Karşılaştırma - Art Gallery</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #333; margin: 0; padding: 20px; }
+        .header {display: flex; justify-content: space-between; align-items:  center; max-width: 1200px; margin: 0 auto 30px auto; }
+        .back-btn {background: #34495e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .clear-btn { background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+
+        .compare-table { width: 100%; max-width: 1200px; margin: 0 auto; border-collapse: collapse; background: white; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); border-radius: 8px; overflow: hidden; }
+        .compare-table th, .compare-table td { padding: 15px; border: 1px solid #eee; text-align: center; vertical-align: middle;}
+        .compare-table th { background-color: #f4f6f7; color: 2c3e50; width: 15%; font-size: 16px; text-align: right; padding-right: 20px;}
+        .compare-table td { width: 20%; }
+
+        .art-img {width: 100%; max-height: 200px; object-fit: contain; border-radius: 4px; margin-bottom: 10px; }
+        .art-title { font-size: 18px; font-weight: bold; color: #2c3e50; margin: 0 0 10px 0; }
+        .price { color: #27ae60; font-weight: bold; font-size: 18px; }
+        
+        #emptyState { text-align: center; margin-top: 50px; display: none; }
+    </style>
+</head>
+<body style="display: block;">
+    <div class="header">
+        <a href="gallery.html" class="back-btn">Galeriye Dön</a>
+        <h2 style="margin: 0; color: #2c3e50;">Eser Karşılaştırma</h2>
+        <button class="clear-btn" onclick="clearComparison()">Listeyi Temizle</button>
+    </div>
+
+    <table class="compare-table" id="compareTable" style="display: none;">
+        </table>
+
+        <div id="emptyState">
+            <h3 style="color: #7f8c8d;">Karşılaştırma listeniz boş</h3>
+            <p>Lütfen galeriden Karşılaştırmak istediğiniz eserleri seçin.</p>
+        </div>
+
+    <script src="js/compare-artwork.js"></script>
+</body>
+</html>
