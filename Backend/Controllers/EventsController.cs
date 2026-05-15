@@ -80,7 +80,6 @@ namespace Backend.Controllers
             }
         }
         
-
         //POST: api/events/purchase
         //Yeni bir rezervayon oluşturur
         [HttpPost("purchase")]
@@ -204,6 +203,49 @@ namespace Backend.Controllers
                         return BadRequest(new { error = ex.Message });
                     }
                 }
+            }
+        }
+    
+        //GET: api/events/workshop/{organizerId}/dashboard
+        //Atölye sahibi istatistik paneli
+        [HttpGet("workshop/{organizerId}/dashboard")]
+        public async Task<IActionResult> GetWorkshopDashboard(int organizerId)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                //Kendi etkinlikleri ve seansların durumu
+                var eventsSql = @"
+                    SELECT e.EventId, e.Title, e.Price,
+                    (SELECT COUNT(*) FROM EventSessions s WHERE s.EventId = e.EventId) as TotalSessions,
+                    (SELECT SUM(CurrentCapacity) FROM EventSessions s WHERE s.EventId = e.EventId) as TotalRemainingCapacity
+                    FROM Events e WHERE e.OrganizerId = @OrganizerId";
+
+                //Kendi etkinliklerine yapılmış yorumlar
+                var commentsSql = @"
+                    SELECT c.CommentId, u.FullName as UserName, e.Title as EventTitle, c.Rating, c.CommentText, c.OwnerReply, c.CreatedAt
+                    FROM Comments c
+                    JOIN Events e ON c.EventId = e.EventId
+                    JOIN Users u ON c.UserId = u.UserId
+                    WHERE e.OrganizerId = @OrganizerId
+                    ORDER BY c.CreatedAt DESC";
+
+                var events = await connection.QueryAsync<dynamic>(eventsSql, new { OrganizerId = organizerId });
+                var comments = await connection.QueryAsync<dynamic>(commentsSql, new { OrganizerId = organizerId });
+
+                return Ok(new { events, comments });
+            }
+        }
+
+        //POST: api/events/comments/{commentId}/reply
+        //Atölye sahibi yotum yanıtı
+        [HttpPost("comments/{commentId}/reply")]
+        public async Task<IActionResult> ReplyToComment(int commentId, [FromBody] CommentReplyDto data)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                var sql = "UPDATE Comments SET OwnerReply = @Reply WHERE CommentId = @Id";
+                await connection.ExecuteAsync(sql, new { Reply = data.ReplyText, Id = commentId });
+                return Ok(new { message = "Yanıtınız başarıyla eklendi." });
             }
         }
     }

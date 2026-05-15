@@ -10,6 +10,7 @@ namespace Backend.Models
         public int Rating { get; set; }
         public int UsefulCount { get; set; }
         public string? AdminReply { get; set; }
+        public string? OwnerReply { get; set; }
         public DateTime CreatedAt { get; set; }
 
         public string? UserName { get; set; }    //Yorumu yapanın adını göstermek için ekstra alan

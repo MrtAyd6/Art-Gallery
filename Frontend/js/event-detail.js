@@ -197,6 +197,11 @@ async function loadComments() {
                             <strong style="color: #2980b9;">Yönetici Yanıtı:</strong> <br> ${c.adminReply}
                         </div>`
                     :'';
+                let ownerReplyHtml = c.ownerReply
+                     ? `<div style="background-color: #f0f8ff; padding: 10px; margin-top; border-left: 4px solid #3498db; border-radius: 4px;">
+                            <strong style="color: #2980b9;">Etkinik Sahibi Yanıtı:</strong> <br> ${c.ownerReply}
+                        </div>`
+                    :'';
 
                 list.innerHTML += `
                     <div style="backgorund: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid #3498db">
@@ -210,6 +215,7 @@ async function loadComments() {
                         <p style="margin-top: 10px; color: #555;">${c.commentText}</p>
 
                         ${adminReplyHtml}
+                        ${ownerReplyHtml}
 
                         <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
                             <small style="color: #999;">Tarih: ${new Date(c.createdAt).toLocaleDateString('tr-TR')}</small>

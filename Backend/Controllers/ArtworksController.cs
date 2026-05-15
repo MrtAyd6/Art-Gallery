@@ -153,5 +153,55 @@ namespace Backend.Controllers
                 }
             }
         }
+    
+        //GET: api/artworks/user/orders
+        //Müşterinin siparişlerini getir
+        [HttpGet("user/{userId}/orders")]
+        public async Task<IActionResult> GetUserOrders(int userId)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                var sql = @"
+                    SELECT o.OrderId, o.OrderDate, o.Status, a.Title, a.Price, a.ArtworkId
+                    FROM Orders o
+                    JOIN Artworks a ON o.ArtworkId = a.ArtworkId
+                    WHERE o.UserId = @UserId
+                    ORDER BY o.OrderDate DESC";
+
+                var orders = await connection.QueryAsync<dynamic>(sql, new { UserId = userId });
+                return Ok(orders);
+            }
+        }
+    
+        //POST: api/artworks/purchase
+        //Eser satın alma
+        [HttpPost("purchase")]
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto request)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                //Eserin durumunu kontrol et
+                var status = await connection.QueryFirstOrDefaultAsync<string>(
+                    "SELECT Status FROM Artworks WHERE ArtworkId = @ArtworkId",
+                    new { request.ArtworkId }
+                );
+
+                if(status == "Sold")
+                {
+                    return BadRequest(new { error = "Üzgünüz, bu eser az önce başkası tarafından satın alındı!" });
+                }
+                
+                //Siparişi 'ORders tablosuna 'pending' olarak ekle
+                var sql = @"
+                    INSERT INTO Orders (UserId, ArtworkId, OrderDate, PaymentMethod, Status)
+                    VALUES (@UserId, @ArtworkId, CURRENT_TIMESTAMP, @PaymentMethod, 'Pending')";
+
+                await connection.ExecuteAsync(sql, request);
+
+                return Ok(new { message = "Siparişiniz başarıyla alındı ve sanatçı onayına sunulldu!" });
+            }
+        }
     }
 }

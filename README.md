@@ -34,7 +34,7 @@
 
 - [x] Etkinlik veya eser satın alma
 - [x] Ödeme yöntemini seçme
-- [ ] Siparişi veya rezervasyonu onaylama
+- [x] Siparişi veya rezervasyonu onaylama
 
 7 - Hesap Yönetimi
 
@@ -45,9 +45,9 @@
 
 8 - Sipariş ve Rezervasyon Takibi
 
-- [ ] Satın alınan eserlerin durumunu kontrol etme
+- [x] Satın alınan eserlerin durumunu kontrol etme
 - [x] Yapılan rezervasyonların durumunu görüntüleme
-- [ ] Geçmiş sipariş ve rezervasyonları listeleme
+- [x] Geçmiş sipariş ve rezervasyonları listeleme
 
 9 - İndirim ve Kampanyalar
 
@@ -81,8 +81,8 @@
 
 14 - Yorumlara Yanıt Verme
 
-- [ ] Galeri yöneticisinin veya etkinlik sorumlusunun yorumlara yanıt verebilmesi
-- [ ] Kullanıcıların bu yanıtları görüntüleyebilmesi
+- [x] Galeri yöneticisinin veya etkinlik sorumlusunun yorumlara yanıt verebilmesi
+- [x] Kullanıcıların bu yanıtları görüntüleyebilmesi
 
 15 - Doğrulama ve Güvenilirlik
 
