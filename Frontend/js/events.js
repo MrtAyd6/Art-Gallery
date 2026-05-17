@@ -159,3 +159,46 @@ document.addEventListener('DOMContentLoaded', updateEventCompareUI);
 
 //Sayfa açıldığında iki listeyi de doldur
 loadEvents();
+
+async function loadCampaigns() {
+    const section = document.getElementById('campaignsSection');
+    const list = document.getElementById('campaignsList');
+
+    try{
+        const response = await fetch(`${API_BASE_URL}/events/campaigns`);
+        const campaigns = await response.json();
+
+        if(campaigns.length > 0){
+            section.style.display = 'block';
+            
+            list.innerHTML = campaigns.map(c => {
+                const originalPrice = parseFloat(c.price);
+                const discount = parseInt(c.discountrate);
+                const newPrice = originalPrice - (originalPrice * discount / 100);
+
+                return `
+                <div style="min-width: 250px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; cursor: pointer;" onclick="window.location.href='event-detail.html?id=${c.eventid}'">
+                
+                    <div style="position: absolute; top: -10px; right: -10px; background: #e74c3c; color: white; padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transform: rotate(5deg);">
+                        %${discount} İNDİRİM
+                    </div>
+                    
+                    <h4 style="margin: 0 0 5px 0; color: #2c3e50;">${c.title}</h4>
+                    
+                    <div>
+                        <span style="text-decoration: line-through; color: #95a5a6; font-size: 13px;">${originalPrice} ₺</span>
+                        <span style="color: #c0392b; font-weight: bold; font-size: 18px; margin-left: 5px;">${newPrice} ₺</span>
+                    </div>
+                `;
+            }).join('');
+        }else{
+            section.style.display = 'none';
+        }
+    }catch (e){
+        console.error("Kampanyalar yüklenemdi.", e);
+    }
+}
+//Ana sayfa yüklendiğinde çalıştır
+document.addEventListener('DOMContentLoaded', () => {
+    loadCampaigns();
+});

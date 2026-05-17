@@ -105,7 +105,9 @@ namespace Backend.Controllers
                 //Eserlerin istatistikleri
                 var artworksSql = @"
                     SELECT a.*,
-                    (SELECT COUNT(*) FROM Comments c WHERE c.ArtworkId = a.ArtworkId) as CommentCount
+                        (SELECT COUNT(*) FROM Comments c WHERE c.ArtworkId = a.ArtworkId) as CommentCount,
+                        (SELECT COALESCE(AVG(c.Rating), 0) FROM Comments c WHERE c.ArtworkId = a.ArtworkId) as Rating,
+                        (SELECT COUNT(*) FROM Favorites f WHERE f.ArtworkId = a.ArtworkId) AS FavoriteCount
                     FROM Artworks a WHERE a.ArtistId = @ArtistId";
 
                 //Bu sanatçının eserlerine gelen siparişler
@@ -201,6 +203,20 @@ namespace Backend.Controllers
                 await connection.ExecuteAsync(sql, request);
 
                 return Ok(new { message = "Siparişiniz başarıyla alındı ve sanatçı onayına sunulldu!" });
+            }
+        }
+    
+        //GET: api/artworks/campaigns
+        //Kampanyalı eserleri getir
+        [HttpGet("campaigns")]
+        public async Task<IActionResult> GetCampaignArtworks()
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                //İndirim oranı0 dan büyük olan ve satılmamış olan
+                var sql = "SELECT * FROM Artworks WHERE DiscountRate > 0 AND Status = 'Active' ORDER BY DiscountRate DESC";
+                var campaigns = await connection.QueryAsync<dynamic>(sql);
+                return Ok(campaigns);
             }
         }
     }

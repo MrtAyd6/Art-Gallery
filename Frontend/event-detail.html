@@ -12,6 +12,10 @@
     </nav>
 
     <main class="container">
+        <div style="display: flex; justify-content: flex-end;">
+            <div id="averageRatingBadge" style="display: none; align-items: center; gap: 5px; background: #fff; border: 1px solid #f1c40f; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 16px; color: #2c3e50; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); width: fit-content; margin-bottom: 15px;"></div>
+        </div>
+
         <div id="eventDetailContent" class="box" style="max-width: 800px; margin: auto;">
             <p>Yükleniyor...</p>
         </div>
@@ -40,6 +44,14 @@
                 <p id="commentMessage" style="margin-top: 10px; font-size: 14px;"></p>
             </div>
 
+            <div style="display: flex; justify-content: flex-end;">
+                <select id="commentSorter" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc; background: #fdfdfd; cursor: pointer; color: #2c3e50; font-weight: bold;">
+                    <option value="newest">En Yeni</option>
+                    <option value="highest">En Yüksek Puanlı</option>
+                    <option value="mostUsefull">En Faydalı</option>
+                </select>
+            </div>
+            
             <div id="eventCommentList">
                 <p style="color: #7f8c8d;">Yorumlar yükleniyor...</p>
             </div>

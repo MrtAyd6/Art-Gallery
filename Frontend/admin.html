@@ -16,11 +16,18 @@
     <nav class="navbar" style="background-color: #e74c3c;">
         <div class="logo">Art Gallery | Yönetici Paneli</div>
         <div class="user-menu">
-             <div style="margin-bottom: 20px;">
-                <button onclick="openRequestsModal()" class="btn" style="background-color: #f39c12; width: auto; padding: 10px 20px;">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <button onclick="document.getElementById('couponModal').style.display='flex'" style="background-color: #f39c12; color: white; margin-top: 10px; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: 0.3s;" onmouseover="this.style.backgroundColor='#d35400'" onmouseout="this.style.backgroundColor='#e67e22'">
+                    Yeni Kupon Tanımla
+                </button>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <button onclick="openRequestsModal()" class="btn" style="background-color: #f39c12; width: auto; padding: 10px 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onmouseover="this.style.backgroundColor='#d35400'" onmouseout="this.style.backgroundColor='#e67e22'">
                     Premium Başvuruların Yönet
                 </button>
             </div>
+
             <a href="index.html" style="color: white; text-decoration: none;">Siteye Dön</a>
         </div>
     </nav>
@@ -56,6 +63,8 @@
                         <th>Görüntülenme</th>
                         <th>Favoriye Eklenme</th>
                         <th>Yorum Sayısı</th>
+                        <th>Puan</th>
+                        <th>Durum</th>
                     </tr>
                 </thead>
                 <tbody id="artworkStatsBody">
@@ -75,6 +84,37 @@
             <div id="requestsListContainer">
                 <p>Yükleniyor...</p>
             </div>
+        </div>
+    </div>
+
+    <div id="couponModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.6); z-index: 10000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 25px; border-radius: 8px; width: 400px; max-width: 90%;">
+            <h3 style="margin-top: 0; color: #2c3e50;">Yeni kupon oluştur</h3>
+            <form id="couponForm">
+                <div style="margin-bottom: 15px;">
+                    <label>Kupon Kodu</label>
+                    <input type="text" id="couponCode" required style="width: 100%; padding: 8px; border-radius: 4px; border: px solid #ccc; text-transform: uppercase;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Kupon Türü / Geçerlilik Alanı</label>
+                    <select id="couponType" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option value="Artwork">Sanat Eseri (Artwork)</option>
+                        <option value="Event">Atölye / Etkinlik (Event)</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>İndirim Oranı (%)</label>
+                    <input type="number" id="couponRate" min="1" max="100" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid#ccc;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Özel Kullanıcı ID (Herkes için 0 bırakın)</label>
+                    <input type="number" id="couponOwner" value="0" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn" style="background: #95a5a6; width: auto;" onclick="document.getElementById('couponModal').style.display='none'">Vazgeç</button>
+                    <button type="submit" class="btn" style="background: #e67e22; width: auto;">Oluştur</button>
+                </div>
+            </form>
         </div>
     </div>
 

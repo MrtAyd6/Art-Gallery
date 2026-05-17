@@ -35,6 +35,8 @@ async function loadArtworks() {
                     const card = document.createElement('div');
                     card.className = 'card';
 
+                    const price = art.price - (art.price * art.discountRate / 100);
+
                     //KArtı tıklanabilir yap
                     card.style.cursor = 'pointer';
                     card.style.transition = 'transform 0.2s';
@@ -47,7 +49,7 @@ async function loadArtworks() {
                         <img src="Images/artworks/${art.artworkId}.jpg" onerror="Images/default.jpg" alt="${art.title}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px; margin-bottom: 12px;">
                         <h3 style="color: #2c3e50; margin-bottom: 8px;">${art.title}</h3>
                         <p style="color: #7f8c8d; font-size: 14px; margin-bottom: 8px;">Sanatçı: ${art.artistName}</p>
-                        <p style="font-weight: bold; color: #27ae60; font-size: 16px;">${art.price} ₺</p>
+                        <p style="font-weight: bold; color: #27ae60; font-size: 16px;">${price} ₺</p>
                         
                         <button onclick="event.stopPropagation(); toggleCompare(${art.artworkId})" id="compBtn_${art.artworkId}" title="Karşılaştırmaya Ekle" style="position: ablolute; bottom: 15px; right: 15px; background: #f4f6f7; border: 1px solid #bdc3c7; color: #7f8c8d; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 16px; transition: 0.3s;">
                             ⚖️
@@ -64,6 +66,8 @@ async function loadArtworks() {
         grid.innerHTML = '<p style="color:red;">Sunucuya bağlanılamadı.';
     }
 }
+//Sayfa açıldığında eserleri yüklemeyi başlat
+loadArtworks();
 
 //FAvorilere ekleme
 async function addToFavorites(artworkId) {
@@ -144,5 +148,47 @@ function updateCompareUI(){
 //Sayfa yüklendiğinde butonu kontrol et
 document.addEventListener('DOMContentLoaded', updateCompareUI);
 
-//Sayfa açıldığında eserleri yüklemeyi başlat
-loadArtworks();
+async function loadCampaigns() {
+    const section = document.getElementById('campaignsSection');
+    const list = document.getElementById('campaignsList');
+
+    try{
+        const response = await fetch(`${API_BASE_URL}/artworks/campaigns`);
+        const campaigns = await response.json();
+
+        if(campaigns.length > 0){
+            section.style.display = 'block';
+            
+            list.innerHTML = campaigns.map(c => {
+                const originalPrice = parseFloat(c.price);
+                const discount = parseInt(c.discountrate);
+                const newPrice = originalPrice - (originalPrice * discount / 100);
+
+                return `
+                <div style="min-width: 250px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; cursor: pointer;" onclick="window.location.href='artwork-detail.html?id=${c.artworkid}'">
+                
+                    <div style="position: absolute; top: -10px; right: -10px; background: #e74c3c; color: white; padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transform: rotate(5deg);">
+                        %${discount} İNDİRİM
+                    </div>
+                    
+                    <img src="Images/artworks/${c.artworkid}.jpg" onerror="this.src='Images/default.jpg'" style="width: 100%; height: 150px; object-fit: cover; border-radius: 6px; margin-bottom: 10px;">
+                    <h4 style="margin: 0 0 5px 0; color: #2c3e50;">${c.title}</h4>
+                    
+                    <div>
+                        <span style="text-decoration: line-through; color: #95a5a6; font-size: 13px;">${originalPrice} ₺</span>
+                        <span style="color: #c0392b; font-weight: bold; font-size: 18px; margin-left: 5px;">${newPrice} ₺</span>
+                    </div>
+                `;
+            }).join('');
+        }else{
+            section.style.display = 'none';
+        }
+    }catch (e){
+        console.error("Kampanyalar yüklenemdi.", e);
+    }
+}
+
+//Ana sayfa yüklendiğinde çalıştır
+document.addEventListener('DOMContentLoaded', () => {
+    loadCampaigns();
+});

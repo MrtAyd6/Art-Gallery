@@ -77,10 +77,19 @@ async function applyCoupon() {
     if(!code) return;
 
     try{
-        const response = await fetch(`${API_BASE_URL}/coupons/${code}`);
+        const response = await fetch(`${API_BASE_URL}/coupons/validate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                code: code,
+                userId: parseInt(localStorage.getItem('userId')),
+                purchaseType: "Event"
+            })
+        });
+
         if(response.ok){
             const coupon = await response.json();
-            discountPercentage = coupon.discountPercentage;
+            discountPercentage = coupon.discount;
             calculateTotal();   //Kupon girilince fiyatı yeniden hesapla
             alert("Kupon başarıyla uygulandı!");
         }else{

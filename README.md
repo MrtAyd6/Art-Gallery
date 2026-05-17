@@ -52,8 +52,8 @@
 9 - İndirim ve Kampanyalar
 
 - [x] İndirim kuponu kullanma
-- [ ] Kampanyalı etkinlikleri veya eserleri görüntüleme
-- [ ] Belirli kullanıcılara özel fırsatlar sunma
+- [x] Kampanyalı etkinlikleri veya eserleri görüntüleme
+- [x] Belirli kullanıcılara özel fırsatlar sunma
 
 10 - Müşteri Destek
 
@@ -76,8 +76,8 @@
 13 - Yorumları Değerlendirme ve Filtreleme
 
 - [x] Yorumlara puan verme veya faydalı bulma oyu verme
-- [ ] Yorumları en yeni, en yüksek puanlı veya en faydalı olacak şekilde filtreleme
-- [ ] Ortalama puan bilgilerini görüntüleme
+- [x] Yorumları en yeni, en yüksek puanlı veya en faydalı olacak şekilde filtreleme
+- [x] Ortalama puan bilgilerini görüntüleme
 
 14 - Yorumlara Yanıt Verme
 
@@ -92,6 +92,6 @@
 
 16 - İstatistik ve Raporlama
 
-- [ ] Eser bazında toplam beğeni, yorum ve görüntülenme sayılarını gösterme
-- [ ] Etkinlik bazında doluluk oranı, ortalama puan ve toplam rezervasyon sayılarını gösterme
-- [ ] Yönetici için özet rapor ekranı oluşturma
+- [x] Eser bazında toplam beğeni, yorum ve görüntülenme sayılarını gösterme
+- [x] Etkinlik bazında doluluk oranı, ortalama puan ve toplam rezervasyon sayılarını gösterme
+- [x] Yönetici için özet rapor ekranı oluşturma
