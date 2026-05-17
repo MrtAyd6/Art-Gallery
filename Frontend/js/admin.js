@@ -58,6 +58,8 @@ async function loadArtworkStats() {
                         <td>${s.viewscount}</td>
                         <td>${s.favoritecount}</td>
                         <td>${s.commentcount}</td>
+                        <td>${s.rating} ⭐</td>
+                        <td>${s.status}</td>
                     </tr>
                 `;
             });
@@ -150,3 +152,27 @@ async function processRequest(requestId, decision) {
         alert("Sunucu hatası!");
     }
 }
+
+//Kupon ekleme formu
+document.getElementById('couponForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const code = document.getElementById('couponCode').value.trim().toUpperCase();
+    const couponType = document.getElementById('couponType').value;
+    const discountRate = parseInt(document.getElementById('couponRate').value);
+    const ownerId = parseInt(document.getElementById('couponOwner').value);
+
+    try{
+        const response = await fetch(`${API_BASE_URL}/coupons/admin/add`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code, discountRate, ownerId, couponType })
+        });
+
+        if(response.ok){
+            alert("Kupon başarıyla tanımlandı!");
+            document.getElementById('couponModal').style.display = 'none';
+            document.getElementById('couponForm').reset();
+        }
+    }catch (e) { alert("Sunucu hatası!" + e); }
+});

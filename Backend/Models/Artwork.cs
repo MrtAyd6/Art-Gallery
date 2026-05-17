@@ -10,5 +10,6 @@ namespace Backend.Models
         public decimal Price { get; set; }
         public string Category { get; set; }
         public int ViewsCount { get; set; }
+        public int DiscountRate { get; set; }
     }
 }

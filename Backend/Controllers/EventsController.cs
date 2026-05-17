@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Backend.Models;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -111,6 +113,9 @@ namespace Backend.Controllers
                         var updateCapacity = "UPDATE EventSessions SET CurrentCapacity = CurrentCapacity - @TicketCount WHERE SessionId = @SessionId";
                         await connection.ExecuteAsync(updateCapacity, new { TicketCount = request.TicketCount, SessionId = request.SessionId });
 
+                        var updateEventCapacity = "UPDATE Events SET CurrentCapacity = CurrentCapacity - @TicketCount";
+                        await connection.ExecuteAsync(updateEventCapacity, new { TicketCount = request.TicketCount, EventId = request.EventId });
+
                         //Rezervasyonu Kaydet
                         var insertReservation = @"
                             INSERT INTO Reservations (UserId, EventId, SessionId, TicketCount, TotalPrice, CreatedAt)
@@ -145,13 +150,15 @@ namespace Backend.Controllers
                     try
                     {
                         //Rezervasyon bilgilerini al
-                        var resQuery = "SELECT SessionId, TicketCount FROM Reservations WHERE ReservationId = @Id";
+                        var resQuery = "SELECT SessionId, TicketCount, EventId FROM Reservations WHERE ReservationId = @Id";
                         var res = await connection.QueryFirstOrDefaultAsync<Reservation>(resQuery, new { Id = reservationId });
                         if (res == null) return NotFound("Rezervasyon bulunamadı.");
 
                         //İptal edilen biletleri seansın kontenjanına ekle
                         await connection.ExecuteAsync("UPDATE EventSessions SET CurrentCapacity = CurrentCapacity + @Tickets WHERE SessionId = @SessionId",
                             new { Tickets = res.TicketCount, SessionId = res.SessionId });
+                        await connection.ExecuteAsync("UPDATE Events SET CurrentCapacity = CurrentCapacity + @Tickets WHERE EventId = @EventId",
+                            new { Tickets = res.TicketCount, EventId = res.EventId});
 
                         //rezervasyonu veritabanından sil
                         await connection.ExecuteAsync("DELETE FROM Reservations WHERE ReservationId = @Id", new { Id = reservationId });
@@ -180,12 +187,14 @@ namespace Backend.Controllers
                     try
                     {
                         //Eski rezervasyonu bul
-                        var oldRes = await connection.QueryFirstOrDefaultAsync<Reservation>("SELECT SessionId, TicketCount FROM Reservations WHERE ReservationId = @Id", new { Id = reservationId });
+                        var oldRes = await connection.QueryFirstOrDefaultAsync<Reservation>("SELECT SessionId, TicketCount, EventId FROM Reservations WHERE ReservationId = @Id", new { Id = reservationId });
                         if(oldRes == null) return NotFound("Rezervasyon bulunamadı.");
 
                         //Eski seansın kontenjanını geri iade et
                         await connection.ExecuteAsync("UPDATE EventSessions SET CurrentCapacity = CurrentCapacity + @Tickets WHERE SessionId = @SessionId",
                             new { Tickets = oldRes.TicketCount, SessionId = oldRes.SessionId });
+                        await connection.ExecuteAsync("UPDATE Events SET CurrentCapacity = CurrentCapacity + @Tickets WHERE EventId = @EventId",
+                            new { Tickets = oldRes.TicketCount, EventId = oldRes.EventId });
 
                         //Yeni seansın kontenjanını kontrol et
                         var newCap = await connection.ExecuteScalarAsync<int>("SELECT CurrentCapacity FROM EventSessions WHERE SessionId = @SessionId FOR UPDATE", new { SessionId = request.SessionId });
@@ -194,6 +203,8 @@ namespace Backend.Controllers
                         //Yeni seansın kontenjanından biletleri düş
                         await connection.ExecuteAsync("UPDATE EventSessions SET CurrentCapacity = CurrentCapacity - @Tickets WHERE SessionId = @SessionId",
                             new { Tickets = request.TicketCount, SessionId = request.SessionId });
+                        await connection.ExecuteAsync("UPDATE Events SET CurrentCapacity = CurrentCapacity - @Tickets WHERE EventId = @EventId",
+                            new { Tickets = request.TicketCount, EventId = oldRes.EventId });
 
                         //Rezervasyon kaydını güncelle
                         var updateQuery = "UPDATE Reservations SET SessionId = @SessionId, TicketCount = @TicketCount, TotalPrice = @TotalPrice WHERE ReservationId = @Id";
@@ -221,7 +232,8 @@ namespace Backend.Controllers
                 var eventsSql = @"
                     SELECT e.EventId, e.Title, e.Price,
                     (SELECT COUNT(*) FROM EventSessions s WHERE s.EventId = e.EventId) as TotalSessions,
-                    (SELECT SUM(CurrentCapacity) FROM EventSessions s WHERE s.EventId = e.EventId) as TotalRemainingCapacity
+                    (SELECT SUM(CurrentCapacity) FROM EventSessions s WHERE s.EventId = e.EventId) as TotalRemainingCapacity,
+                    TotalCapacity
                     FROM Events e WHERE e.OrganizerId = @OrganizerId";
 
                 //Kendi etkinliklerine yapılmış yorumlar
@@ -250,6 +262,109 @@ namespace Backend.Controllers
                 var sql = "UPDATE Comments SET OwnerReply = @Reply WHERE CommentId = @Id";
                 await connection.ExecuteAsync(sql, new { Reply = data.ReplyText, Id = commentId });
                 return Ok(new { message = "Yanıtınız başarıyla eklendi." });
+            }
+        }
+    
+        //GET: api/events/campaigns
+        //Kampanyalı etkinlikleri getir
+        [HttpGet("campaigns")]
+        public async Task<IActionResult> GetCampaignEvents()
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                //İndirim oranı 0 dan büyük olan
+                var sql = "SELECT * FROM Events WHERE DiscountRate > 0 ORDER BY DiscountRate DESC";
+                var campaigns = await connection.QueryAsync<dynamic>(sql);
+                return Ok(campaigns);
+            }
+        }
+    
+        //POST: api/events/add-event
+        //Yeni etkinlik ekle
+        [HttpPost("add-event")]
+        public async Task<IActionResult> AddEvent([FromForm] CreateEventFormDto dto)
+        {
+            if(dto.ImageFile == null || dto.ImageFile.Length == 0)
+                return BadRequest(new { error = "Lütfen bir etkinlik görseli yükleyin." });
+
+            //JSON gelen seansları çevir
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var sessions = JsonSerializer.Deserialize<List<SessionHelperDto>>(dto.SessionsJson, options);
+
+            if(sessions == null || sessions.Count == 0)
+                return BadRequest(new { error = "En az 1 seans tanımlamalısınız." });
+
+            //TotalCapacity
+            int calculatedTotalCapacity = sessions.Sum(s => s.Capacity);
+
+            //ilk seans tarihi eventDate
+            string firstSessionDate = sessions.OrderBy(s => s.SessionDate).First().SessionDate;
+
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                using (var trans = await connection.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        DateTime parsedEventDate = DateTime.ParseExact(
+                            firstSessionDate,
+                            "dd.MM.yyyy",
+                            System.Globalization.CultureInfo.InvariantCulture
+                        );
+
+                        //Events tablosuna ekle ve eventIdyi al
+                        var insertEventSql = @"
+                            INSERT INTO Events (Title, Description, Price, EventDate, TotalCapacity, CurrentCapacity, OrganizerId)
+                            VALUES (@Title, @Description, @Price, @EventDate, @TotalCapacity, @CurrentCapacity, @OrganizerId)
+                            RETURNING EventId";
+
+                        int newEventId = await connection.ExecuteScalarAsync<int>(insertEventSql, new
+                        {
+                            Title = dto.Title,
+                            Description = dto.Description,
+                            Price = dto.Price,
+                            EventDate = parsedEventDate,
+                            TotalCapacity = calculatedTotalCapacity,
+                            CurrentCapacity = calculatedTotalCapacity,
+                            OrganizerId = dto.OrganizerId
+                        });
+
+                        //Seansları EventSessions tablosuna ekle
+                        var insertSessionSql = @"
+                            INSERT INTO EventSessions (EventId, SessionDate, StartTime, EndTime, TotalCapacity, CurrentCapacity)
+                            VALUES (@EventId, @SessionDate, @StartTime, @EndTime, @Capacity, @Capacity)";
+
+                        foreach (var session in sessions)
+                        {
+                            await connection.ExecuteAsync(insertSessionSql, new
+                            {
+                                EventId = newEventId,
+                                SessionDate = session.SessionDate,
+                                StartTime = session.StartTime,
+                                EndTime = session.EndTime,
+                                Capacity = session.Capacity
+                            });
+                        }
+
+                        //Fotoğrafı kaydet
+                        var folderPath = Path.Combine(Directory.GetCurrentDirectory(),"..", "Frontend", "Images", "events");
+                        if(!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+
+                        var filePath = Path.Combine(folderPath, $"{newEventId}.jpg");
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await dto.ImageFile.CopyToAsync(stream);
+                        }
+
+                        await trans.CommitAsync();
+                        return Ok(new { message = "Etkinlik ve seanslar başarıyla yayınlandı!" });
+                    }catch (Exception ex)
+                    {
+                        await trans.RollbackAsync();
+                        return BadRequest(new { error = "Hata oluştu: " + ex.Message });
+                    }
+                }
             }
         }
     }

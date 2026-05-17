@@ -6,6 +6,7 @@ const userId = localStorage.getItem('userId');
 let selectedSessionId = null;
 let groupedSessions = {};   //Seansları tarihlerine göre tutmak için
 
+//Etkinlik bilgileri
 async function loadDetail() {
     const content = document.getElementById('eventDetailContent');
    
@@ -42,8 +43,11 @@ async function loadDetail() {
             dateButtonsHtml = '<p style="color: #e74c3c;">Bu etkinlik için henüz seans açılmaıştır.</p>';
         }
 
+        const price = ev.price - (ev.price * ev.discountRate / 100);
+
         content.innerHTML = `
             <h1 style="color: #2c3e50;">${ev.title}</h1>
+            
             <img src="${imageurl}" style="width:100%; border-radius:8px;">
             <h2 style="margin-top:20px;">${ev.description || 'Bu etkinlik hakkında henüz bir açıklama girilmemiş.'}</p>
             
@@ -58,7 +62,7 @@ async function loadDetail() {
                     <p style="color: #7f8c8d; font-style: italic;">Lütfen saatleri görmek için yukarıdan bir tarih seçiniz.</p>
                 </div>
 
-                <p style="margin-top: 20px; font-size: 18px;"><strong>Ücret:</strong> ${ev.price} ₺</p>
+                <p style="margin-top: 20px; font-size: 18px;"><strong>Ücret:</strong> ${price} ₺</p>
                 <button class="btn" style="margin-top: 10px; width: 100%; padding: 12px; font-size: 16px;" onclick="goToPurchase(${ev.eventId})">Satın Almaya İlerle</button>
             </div>
         `;
@@ -175,6 +179,8 @@ function renderStars(rating){
 }
 
 
+let currentComments = [];
+
 //Yorumları getirme
 async function loadComments() {
     const list = document.getElementById('eventCommentList');
@@ -183,52 +189,90 @@ async function loadComments() {
     try{
         const response = await fetch(`${API_BASE_URL}/comments/event/${eventId}`);
         if(response.ok){
-            const comments = await response.json();
+            currentComments = await response.json();
             list.innerHTML = '';
 
-            if(comments.length === 0){
-                list.innerHTML = '<p style="color: #7f9c9d;">Bu etkinlik için henüz yorum yapılmamış. İlk yorumu siz yapın!</p>';
-                return;
+            const badge = document.getElementById('averageRatingBadge');
+
+            if(badge && currentComments && currentComments.length > 0){
+                
+                const totalRating = currentComments.reduce((sum, c) => sum + (c.rating || 0), 0);
+                const average = (totalRating / currentComments.length).toFixed(1);
+
+                badge.innerHTML = `
+                    <span style="color: #f1c40f; font-size: 18px;">★</span>
+                    <span style="font-size: 16px; color: #2c3e50;">${average}</span>
+                    <span style="color: #95a5a6; font-size: 13px; font-weight: normal; margin-left: 3px;">(${currentComments.length} yorum)</span>
+                `;
+                badge.style.display = 'flex';
+            }else if(badge){
+                badge.innerHTML = `<span style="color:#95a5a6; font-size: 13px; font-weight: normal;">Henüz puanlanmamış</span>`;
+                badge.style.display = 'flex';
             }
 
-            comments.forEach(c => {
-                let adminReplyHtml = c.adminReply
-                    ? `<div style="background-color: #f0f8ff; padding: 10px; margin-top; border-left: 4px solid #3498db; border-radius: 4px;">
-                            <strong style="color: #2980b9;">Yönetici Yanıtı:</strong> <br> ${c.adminReply}
-                        </div>`
-                    :'';
-                let ownerReplyHtml = c.ownerReply
-                     ? `<div style="background-color: #f0f8ff; padding: 10px; margin-top; border-left: 4px solid #3498db; border-radius: 4px;">
-                            <strong style="color: #2980b9;">Etkinik Sahibi Yanıtı:</strong> <br> ${c.ownerReply}
-                        </div>`
-                    :'';
-
-                list.innerHTML += `
-                    <div style="backgorund: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid #3498db">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <strong style="color: #2c3e50;">${c.userName || 'Kullanıcı'}</strong>
-                            <button class="btn-outline" style="margin-left: auto; width: auto; padding: 5px 10px; font-size: 15px; cursor: pointer;" onclick="markUsefull(${c.commentId})">
-                                🤍(${c.usefulCount})
-                            </button>
-                            ${renderStars(c.rating)}
-                        </div>
-                        <p style="margin-top: 10px; color: #555;">${c.commentText}</p>
-
-                        ${adminReplyHtml}
-                        ${ownerReplyHtml}
-
-                        <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
-                            <small style="color: #999;">Tarih: ${new Date(c.createdAt).toLocaleDateString('tr-TR')}</small>
-
-                            
-                        </div>
-                    </div>
-                `;
-            });
+            sortAndRenderComments('newest');
         }
     }catch (error) {
         list.innerHTML = '<p>Yorumlar yüklenirken hata oluştu.</p>';
     }
+}
+
+document.getElementById('commentSorter').addEventListener('change', (e) => {
+    sortAndRenderComments(e.target.value);
+});
+
+//yorumları sırala ve bas
+function sortAndRenderComments(sortType){
+    const list = document.getElementById('eventCommentList');
+    list.innerHTML = '';
+
+    if(currentComments.length === 0){
+        list.innerHTML = '<p style="color: #7f9c9d;">Bu etkinlik için henüz yorum yapılmamış. İlk yorumu siz yapın!</p>';
+        return;
+    }
+
+    if(sortType === 'newest'){
+        currentComments.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+    else if (sortType === 'highest'){
+        currentComments.sort((a,b) => b.rating - a.rating);
+    }else if(sortType === 'mostUsefull'){
+        currentComments.sort((a,b) => (b.usefulCount || 0) - (a.usefulCount || 0));
+    }
+
+    currentComments.forEach(c => {
+        let adminReplyHtml = c.adminReply
+            ? `<div style="background-color: #f0f8ff; padding: 10px; margin-top; border-left: 4px solid #3498db; border-radius: 4px;">
+                    <strong style="color: #2980b9;">Yönetici Yanıtı:</strong> <br> ${c.adminReply}
+                </div>`
+            :'';
+        let ownerReplyHtml = c.ownerReply
+            ? `<div style="background-color: #f0f8ff; padding: 10px; margin-top; border-left: 4px solid #3498db; border-radius: 4px;">
+                    <strong style="color: #2980b9;">Etkinik Sahibi Yanıtı:</strong> <br> ${c.ownerReply}
+                </div>`
+            :'';
+
+        list.innerHTML += `
+            <div style="backgorund: #fff; padding: 15px; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid #3498db">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="color: #2c3e50;">${c.userName || 'Kullanıcı'}</strong>
+                    <button class="btn-outline" style="margin-left: auto; width: auto; padding: 5px 10px; font-size: 15px; cursor: pointer;" onclick="markUsefull(${c.commentId})">
+                        🤍(${c.usefulCount})
+                    </button>
+                    ${renderStars(c.rating)}
+                </div>
+                <p style="margin-top: 10px; color: #555;">${c.commentText}</p>
+
+                ${adminReplyHtml}
+                ${ownerReplyHtml}
+
+                <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <small style="color: #999;">Tarih: ${new Date(c.createdAt).toLocaleDateString('tr-TR')}</small>          
+                </div>
+            </div>
+
+        `;
+    });
 }
 
 //Sayfa açıldıında yorumları yükle

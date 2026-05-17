@@ -24,8 +24,8 @@ async function loadArtworkData() {
 
         if(art){
             artworkTitle = art.title;
-            originalPrice = art.price;
-            currentPrice = art.price;
+            originalPrice = art.price - (art.price * art.discountRate / 100 );
+            currentPrice = art.price  - (art.price * art.discountRate / 100 );
             updateSummaryHtml();
         }
     } catch(e) { document.getElementById('purchaseSummary').innerHTML = "Eser bulunamadı."; }
@@ -46,17 +46,27 @@ async function applyCoupon() {
     if(!code) return;
 
     try{
-        const response = await fetch(`${API_BASE_URL}/coupons/${code}`);
+        
+        const response = await fetch(`${API_BASE_URL}/coupons/validate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                code: code,
+                userId: parseInt(localStorage.getItem('userId')),
+                purchaseType: "Artwork"
+            })
+        });
+
         if (response.ok) {
             const coupon = await response.json();
-            const discountAmount = (originalPrice * coupon.discountPercentage) / 100;
+            const discountAmount = (originalPrice * coupon.discount) / 100;
             currentPrice = originalPrice - discountAmount;
-            updateSummaryHtml(`<span style="color: green;">Kupon Uygulandı (%${coupon.discountPercentage} İndirim): <strong>-${discountAmount} ₺</strong></span><br>`);
+            updateSummaryHtml(`<span style="color: green;">Kupon Uygulandı (%${coupon.discount} İndirim): <strong>-${discountAmount} ₺</strong></span><br>`);
             alert("Kupon başarıyla uygulandı!");
         }else{
             alert("Geçersiz veya süresi dolmuş kupon!");
         }
-    }catch (error) { alert("Bağlantı hatası!"); }
+    }catch (error) { alert("Bağlantı hatası!" + error); }
 }
 
 paymentRadios.forEach(radio => {

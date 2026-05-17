@@ -50,7 +50,9 @@ namespace Backend.Controllers
                         a.Title,
                         COALESCE(a.ViewsCount, 0) AS ViewsCount,
                         (SELECT COUNT(*) FROM Favorites f WHERE f.ArtworkId = a.ArtworkId) AS FavoriteCount,
-                        (SELECT COUNT(*) FROM Comments c WHERE c.ArtworkId = a.ArtworkId) AS CommentCount
+                        (SELECT COUNT(*) FROM Comments c WHERE c.ArtworkId = a.ArtworkId) AS CommentCount,
+                        (SELECT COALESCE(AVG(c.Rating), 0) FROM Comments c WHERE c.ArtworkId = a.ArtworkId) as Rating,
+                        a.Status
                     FROM Artworks a
                     ORDER BY ViewsCount DESC";
                 

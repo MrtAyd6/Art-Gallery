@@ -443,9 +443,25 @@ if(sendRequestBtn){
 //Sanatçı: Yeni eser yükleme
 const addContentBtn = document.getElementById('addContentBtn');
 if(addContentBtn){
-    addContentBtn.addEventListener('click', () => {
-        document.getElementById('addArtworkForm').reset();  //Formu temizle
-        document.getElementById('addArtworkModal').style.display = 'flex';
+    addContentBtn.addEventListener('click', async () => {
+        const userRole =  await getUserRole();
+
+        if(userRole === 'Artist'){
+            document.getElementById('addArtworkForm').reset();  //Formu temizle
+            document.getElementById('addArtworkModal').style.display = 'flex';
+        }
+        else if(userRole === 'WorkshopOwner'){
+            document.getElementById('addEventForm').reset();
+            //Form sıfırlanınca ek seans satırları temizlensin
+            document.getElementById('sessionFormList').innerHTML = `
+                <div class="session-form-item" style="display: flex; gap: 8px; margin-bottom: 10px; align-items: center;">
+                    <input type="date" class="session-date-input" required style="flex: 2; padding: 6px; border:1px solid #ccc; border-radius:4px;">
+                    <input type="time" class="session-start-input" required style="flex: 1; padding: 6px; border:1px solid #ccc; border-radius:4px;">
+                    <input type="time" class="session-end-input" required style="flex: 1; padding: 6px; border:1px solid #ccc; border-radius:4px;">
+                    <input type="number" class="session-cap-input" placeholder="Kont." min="1" required style="width: 70px; padding: 6px; border:1px solid #ccc; border-radius:4px;">
+                </div>`;
+            document.getElementById('addEventModal').style.display = 'flex';
+        }
     });
 }
 
@@ -526,15 +542,19 @@ async function loadDashboard() {
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
                     <tr style="background: #f4f4f4;">
                         <th style="padding: 10px; border: 1px solid #ddd;">Eser Adı</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Puan</th>
                         <th style="padding: 10px; border: 1px solid #ddd;">Görüntülenme</th>
                         <th style="padding: 10px; border: 1px solid #ddd;">Yorum</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Favori</th>
                         <th style="padding: 10px; border: 1px solid #ddd;">Durum</th>
                     </tr>
                     ${data.artworks.map(a => `
                         <tr>
                             <td style="padding: 10px; border: 1px solid #ddd;">${a.title}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">⭐ ${a.rating}</td>
                             <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${a.viewscount}</td>
                             <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${a.commentcount}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${a.favoritecount}</td>
                             <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
                                 <span style="color: ${a.status === 'Sold' ? 'red' : 'green'} font-weight: bold;">${a.status === 'Sold' ? 'SATILDI' : 'SATIŞTA'}</span>
                             </td>
@@ -570,30 +590,56 @@ async function loadDashboard() {
     else if(userRole === 'WorkshopOwner'){
         
         try{
-            
             const response = await fetch(`${API_BASE_URL}/events/workshop/${userId}/dashboard`);
             const data = await response.json();
-            console.log(userRole);
+            
+            
+            
             container.innerHTML = `
                 <h3 style="color: #2980b9;">Etkinlik ve Seans Durumları</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
                     <tr style="background: #f4f4f4;">
                         <th style="padding: 10px; border: 1px solid #ddd;">Etkinlik Adı</th>
-                        <th style="padding: 10px; border: 1px solid #ddd;">Toplam Seans</th>
-                        <th style="padding: 10px; border: 1px solid #ddd;">Boş Kontenjan</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Toplam Rezervasyon</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Doluluk Oranı</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Puan</th>
                     </tr>
-                    ${data.events.map(e => `
-                        <tr>
+                    ${data.events.map(e => {
+                        const total = parseInt(e.totalcapacity);
+                        const remaining = parseInt(e.totalremainingcapacity);
+                        const sold = total - remaining;
+                        const occupancyRate = total > 0 ? Math.round((sold / total) * 100) : 0;
+                        const badgeColor = occupancyRate >= 80 ? '#e74c3c' : '#27ae60';
+
+                        const eventComments = data.comments.filter(c => 
+                            (c.eventtitle && c.eventtitle === e.title)
+                        );
+
+                        let eventScoreHtml = '<span style="color: #bdc3c7;">-</span>';
+
+                        if (eventComments.length > 0) {
+                            const eventRatingSum = eventComments.reduce((sum, c) => sum + parseInt(c.rating || 0), 0);
+                            const eventAvg = (eventRatingSum / eventComments.length).toFixed(1);
+                            eventScoreHtml = `<strong style="color: #f39c12;">⭐ ${eventAvg}</strong> <small style="color: #95a5a6; font-weight: normal;">(${eventComments.length})</small>`;
+                        }
+
+                        return `<tr>
                             <td style="padding: 10px; border: 1px solid #ddd;"><strong>${e.title}</strong></td>
-                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${e.totalsessions || 0}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${sold || 0}</td>
                             <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
-                                <span style="color: ${e.totalremainingcapacity <= 5 ? '#e74c3c' : '#27ae60'}; font-wight: bold">
-                                    ${e.totalremainingcapacity || 0} Kişi
+                                <span style="color: ${badgeColor}; font-wight: bold">
+                                    %${occupancyRate || 0} Dolu
                                 </span>
                             </td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+                                ${eventScoreHtml}
+                            </td>
                         </tr>
-                    `).join('')}
+                    `;
+                    }).join('')}
                 </table>
+
+
             
                 <h3 style="color: #27ae60;">Yorumlar ve Yanıtlar</h3>
                 <div>
@@ -700,4 +746,145 @@ async function loadOrders() {
 
 loadOrders();
 
-//
+
+async function loadUserCoupons() {
+    
+    const list = document.getElementById('couponsList');
+    if(!list) return;
+    
+    try{
+        const response = await fetch(`${API_BASE_URL}/coupons/user/${userId}`);
+        const coupons = await response.json();
+
+        if(coupons.length === 0){
+            list.innerHTML = '<p style="color: #7f8c8d; text-align: center;">Kullanılabilir kuponunuz bulunmuyor.</p>';
+            return;
+        }
+
+        list.innerHTML = coupons.map(c => {
+            const isGlobal = c.ownerid === 0;
+
+            //Kupon işlevi
+            let typeText = '';
+            let typeColor = '';
+            if(c.coupontype === 'Artwork'){
+                typeText = 'Sadece Sanat Eserlerinde Geçerli';
+                typeColor = '#2980b9';
+            }else{
+                typeText = 'Sadece Atölye /Etkinliklerde Geçerli';
+                typeColor = '#8e44ad';
+            }
+
+            return `
+                <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px dashed ${typeColor}; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <strong style="font-size: 18px; color: #2c3e50; letter-spacing: 1px;">${c.code}</strong>
+                        <span style="background: ${typeColor}; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">
+                            %${c.discountrate} İNDİRİM
+                        </span>
+                    </div>
+                    <div style="font-size: 13px; color: ${typeColor}; font-weight: 500;">${typeText}</div>
+                    <small style="color: #999; display: block; margin-top: 4px;">${isGlobal ? 'Herkese Açık Kampanya' : 'Hesabınıza Özel TAnımlı'}</small>
+                </div>
+            `;
+        }).join('');
+    }catch(e){
+        list.innerHTML = '<p style="color: red;">Kuponlar yüklenirken bir hata oluştu.</p>'
+    }
+}
+
+loadUserCoupons();
+
+//Etkinlik formuna yeni satır ekleme
+window.addNewSessionRow = function() {
+    const list = document.getElementById('sessionFormList');
+    const newItem = document.createElement('div');
+    newItem.className = "sessiom-form-item";
+    newItem.style = "display: flex; gap: 8px; margin-bottom: 10px; align-items: center;";
+    newItem.innerHTML = `
+        <input type="date" class="session-date-input" required style="flex: 2; padding: 6px; border:1px solid #ccc; border-radius:4px;">
+        <input type="time" class="session-start-input" required style="flex: 1; padding: 6px; border:1px solid #ccc; border-radius:4px;">
+        <input type="time" class="session-end-input" required style="flex: 1; padding: 6px; border:1px solid #ccc; border-radius:4px;">
+        <input type="number" class="session-cap-input" placeholder="Kont." min="1" required style="width: 70px; padding: 6px; border:1px solid #ccc; border-radius:4px;">
+        <button type="button" onclick="this.parentElement.remove()" style="background:#e74c3c; color:white; border:none; padding:6px 10px; border-radius:4px; cursor:pointer;">&times;</button>
+    `;
+    list.appendChild(newItem);
+}
+
+//Etkinliği kaydet butonu
+document.getElementById('saveEventBtn').addEventListener('click', async () => {
+    const title = document.getElementById('newEventTitle').value.trim();
+    const desc = document.getElementById('newEventDesc').value.trim();
+    const price = document.getElementById('newEventPrice').value.trim();
+    const imageInput = document.getElementById('newEventImage');
+
+    if(!title || !desc || !price || imageInput.files.length === 0){
+        alert("Lütfen tüm alanları doldurun.");
+        return;
+    }
+
+    //Seans verilerini topla
+    const sessionRows = document.querySelectorAll('.session-form-item');
+    const sessionsData = [];
+
+    for (let row of sessionRows){
+        const dateVal = row.querySelector('.session-date-input').value;
+        const startVal = row.querySelector('.session-start-input').value;
+        const endVal = row.querySelector('.session-end-input').value;
+        const capVal = parseInt(row.querySelector('.session-cap-input').value);
+
+        if(!dateVal || !startVal || !endVal || !capVal){
+            alert("Lütfen eklediğiniz tüm seans bilgilerini doldurun.");
+            return;
+        }
+
+        const parts = dateVal.split('-');
+        const formattedDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+
+        sessionsData.push({
+            sessionDate: formattedDate,
+            startTime: startVal,
+            endTime: endVal,
+            capacity: capVal
+        });
+    }
+
+    const saveBtn = document.getElementById('saveEventBtn');
+    saveBtn.innerHTML = "Yayınlanıyor...";
+    saveBtn.disabled = true;
+
+    //Multipart FormData paketini hazırla
+    const formData = new FormData();
+    formData.append("Title", title);
+    formData.append("Description", desc);
+    formData.append("Price",price);
+    formData.append("OrganizerId", userId);
+    formData.append("ImageFile", imageInput.files[0]);
+    formData.append("SessionsJson", JSON.stringify(sessionsData));   //Seans dizisini metin olarak pakete koy
+
+    try{
+        const response = await fetch(`${API_BASE_URL}/events/add-event`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if(response.ok){
+            saveBtn.innerHTML = "Başarıyla Yayınlandı";
+            saveBtn.style.backgroundColor = "#27ae60";
+
+            setTimeout(() => {
+                document.getElementById('addEventModal').style.display = 'none';
+                window.location.reload();
+            }, 2000);
+        }else{
+            const data = await response.json();
+            alert(data.error || "Yükleme sıraında bir hata oluştu.");
+            saveBtn.innerHTML = "Etkinliği Yayınla";
+            saveBtn.disabled = false;
+        }
+    }catch (error){
+        alert("Sunucuya bağlanıllamadı.");
+        saveBtn.innerHTML = "Etkinliği Yayınla";
+        saveBtn.disabled = false;
+    }
+});
