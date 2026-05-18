@@ -1,97 +1,93 @@
-#Art-Gallery-ToDo
+# 🎨 Art Gallery & Workshop Management System
 
-1 - Eserleri İnceleme
+Welcome to the **Art Gallery & Workshop Management System**! This is a comprehensive, full-stack web application designed to bring art enthusiasts, artists, and workshop owners together under one creative roof. 
 
-- [x] Sanat eserlerinin detaylerını görüntüleme
-- [x] Eser görsellerini görüntüleme
-- [x] Eser açıklamalarını ve sanatçı bilgilerini okuma
+Whether you want to browse and purchase unique artworks, reserve a spot in a creative workshop, or manage your own art portfolio, this platform provides a seamless and dynamic experience.
 
-2 - Atölye ve Etkinlikleri Görüntüleme
+---
 
-- [x] Düzenlenen atölye ve etkinlikleri listeleme
-- [x] Etkinlik tarihi, saati, kontenjanı ve ücret bilgilerini görüntüleme
-- [x] Etkinlik detay sayfasını inceleme
+## ✨ Key Features
 
-3 - Favorilere Ekleme
+### 🖼️ For Art Enthusiasts
+- **Discover Artworks:** View detailed information, high-quality images, and artist portfolios.
+- **Smart Comparison:** Compare multiple artworks or events side-by-side based on price, category, and capacity.
+- **Favorites & Purchasing:** Save your favorite artworks and purchase them securely.
+- **Dynamic Events:** Discover, book, and manage your reservations for upcoming art workshops.
+- **Interactive Reviews:** Rate artworks and events, read community reviews, and vote on helpful feedback.
+- **Coupons & Campaigns:** Enjoy special discount codes and seasonal campaigns on both artworks and tickets.
 
-- [x] Beğenilen eserleri favorilere ekleme
-- [x] Favori listesini görüntüleme
-- [x] Favorilerden eser çıkarma
+### 🖌️ For Artists & Workshop Owners
+- **Role Management:** Apply for a specialized "Artist" or "Workshop Owner" role from your profile.
+- **Personal Dashboard:** Track your artwork views, sales, event capacities, and manage your portfolio.
+- **Interact with Attendees:** Read and reply to comments left by users who attended your workshops.
+- **Order Management:** Approve or reject incoming purchase requests directly from your panel.
 
-4 - Rezervasyon Oluşturma
+### 🛡️ Admin & Platform Management
+- **Role Approvals:** Review and approve role upgrade requests from users.
+- **Global Statistics:** View platform-wide statistics for events and artworks.
+- **Secure Authentication:** BCrypt password hashing ensures user data remains secure.
+- **Customer Support System:** Users can send support tickets and track responses.
 
-- [x] Atölye veya etkinlik için rezervasyon yapma
-- [x] Katılımcı sayısını seçme
-- [x] Uygun tarih ve saat seçimi yapma
+---
 
-5 - Rezervasyonu Güncelleme
+## 🚀 Technologies Used
 
-- [x] Rezervasyon tarihini değiştirme
-- [x] Katılımcı sayısını güncelleme
-- [x] Rezervasyonu iptal etme
+- **Backend:** C#, .NET Core Web API
+- **Database:** PostgreSQL (with **Dapper** micro-ORM for high performance)
+- **Frontend:** HTML5, Vanilla CSS, Vanilla JavaScript (No heavy frameworks, blazing fast!)
+- **Security:** BCrypt.Net for secure password hashing.
 
-6 - Satın Alma ve Ödeme İşlemleri
+---
 
-- [x] Etkinlik veya eser satın alma
-- [x] Ödeme yöntemini seçme
-- [x] Siparişi veya rezervasyonu onaylama
+## ⚙️ Installation & Setup
 
-7 - Hesap Yönetimi
+Follow these steps to get the project running on your local machine.
 
-- [x] Kullanıcı kaydı oluşturma
-- [x] Kullanıcı girişi yapma
-- [x] Profil bilgilerini güncelleme
-- [x] Şifre değiştirme
+### 1. Database Setup
+Ensure you have **PostgreSQL** installed on your system.
 
-8 - Sipariş ve Rezervasyon Takibi
+```bash
+# 1. Log in to PostgreSQL
+sudo -u postgres psql
 
-- [x] Satın alınan eserlerin durumunu kontrol etme
-- [x] Yapılan rezervasyonların durumunu görüntüleme
-- [x] Geçmiş sipariş ve rezervasyonları listeleme
+# 2. Create the database
+CREATE DATABASE art_gallery_db;
+\q
 
-9 - İndirim ve Kampanyalar
+# 3. Run the schema and seed files to construct the database
+cat Database/create_tables.sql | sudo -u postgres psql -d art_gallery_db
+cat Database/dummy_data.sql | sudo -u postgres psql -d art_gallery_db
+```
 
-- [x] İndirim kuponu kullanma
-- [x] Kampanyalı etkinlikleri veya eserleri görüntüleme
-- [x] Belirli kullanıcılara özel fırsatlar sunma
+### 2. Backend Setup
+Navigate to the Backend directory and start the .NET API server.
 
-10 - Müşteri Destek
+```bash
+cd Backend
+dotnet restore
+dotnet build
+dotnet run
+```
+*The API will start running, typically accessible at `http://localhost:5160/api`.*
 
-- [x] İletişim formu üzerinden soru gönderme
-- [ ] Canlı destek veya mesaj sistemi kullanma
-- [x] Destek taleplerinin durumunu görüntüleme
+### 3. Frontend Setup
+The frontend is built with pure HTML/JS/CSS, so you don't need Node.js or npm! Simply serve the `Frontend` directory using any local development web server.
 
-11 - Eser ve Etkinlik Karşılaştırma
+```bash
+# Example using Python's built-in HTTP server:
+cd Frontend
+python3 -m http.server 8000
+```
+Then navigate to `http://localhost:8000` in your web browser.
 
-- [x] Birden fazla etkinliği tarih, ücret ve kontenjan açısından karşılaştırma
-- [x] Birden fazla eseri kategori, fiyat ve sanatçı açısından karşılaştırma
-- [x] Karşılaştırma sonuçlarını kaydetme
+---
 
-12 - Yorum Ekleme
+## 📋 Roadmap & Known Issues
+While the core functionality is robust, here are some features planned for the future:
+- [ ] **Live Chat Support:** Real-time messaging system for customer service.
+- [ ] **Verified Buyer Badge:** Adding a "Verified Purchase" tag to reviews from actual buyers.
+- [ ] **Artwork Comment Replies:** Implementing the UI and backend logic for artists to reply to comments on their artworks.
+- [ ] **JWT Authentication:** Adding token-based middleware for secured API endpoints.
 
-- [x] Kullanıcıların eserler hakkında yorum yapabilmesi
-- [x] Kullanıcıların katıldıkları etkinlikler hakkında değerlendirme yazabilmesi
-- [x] Diğer kullanıcı yorumlarını görüntüleyebilmesi
-
-13 - Yorumları Değerlendirme ve Filtreleme
-
-- [x] Yorumlara puan verme veya faydalı bulma oyu verme
-- [x] Yorumları en yeni, en yüksek puanlı veya en faydalı olacak şekilde filtreleme
-- [x] Ortalama puan bilgilerini görüntüleme
-
-14 - Yorumlara Yanıt Verme
-
-- [x] Galeri yöneticisinin veya etkinlik sorumlusunun yorumlara yanıt verebilmesi
-- [x] Kullanıcıların bu yanıtları görüntüleyebilmesi
-
-15 - Doğrulama ve Güvenilirlik
-
-- [x] Yorumların yalnızca giriş yapmış kullanıcılar tarafından yapılabilmesi
-- [x] Etkinlik yorumu yapabilmek için kullanıcının ilgili etkinliğe katılmış olması
-- [ ] Satın alınan eserler için doğrulanmış değerlendirme sistemi kurulması
-
-16 - İstatistik ve Raporlama
-
-- [x] Eser bazında toplam beğeni, yorum ve görüntülenme sayılarını gösterme
-- [x] Etkinlik bazında doluluk oranı, ortalama puan ve toplam rezervasyon sayılarını gösterme
-- [x] Yönetici için özet rapor ekranı oluşturma
+---
+*Made with ❤️ for Art Lovers.*

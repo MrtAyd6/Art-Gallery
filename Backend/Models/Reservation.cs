@@ -11,4 +11,18 @@ namespace Backend.Models
         public int TotalPrice { get; set; }
         public string EventTitle { get; set; }
     }
+
+    public class ReservationRequest
+    {
+        public int UserId { get; set; }
+        public int EventId { get; set; }
+        public int ParticipantCount { get; set; }
+    }
+
+    public class UpdateReservationRequest
+    {
+        public int SessionId { get; set; }
+        public int TicketCount { get; set; }
+        public decimal TotalPrice { get; set; }
+    }
 }

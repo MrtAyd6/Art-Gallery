@@ -51,48 +51,6 @@ async function loadEvents() {
     }
 }
 
-//Rezervasyon Yapma
-async function reserveEvent(eventId) {
-    try{
-        const response = await fetch(`${API_BASE_URL}/events/reserve`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: parseInt(userId), eventId: eventId, participantCount: 1})
-        });
-
-        if(response.ok){
-            alert('Rezervasyon başarıyla yapıldı!');
-            loadEvents(); //Kontenjanın düştüğünü anında görmek için listeyi yenile
-            loadMyReservations(); //Aşağıdaki listeyi yenile
-        }else{
-            const data = await response.json();
-            alert(data.error || 'Rezervasyon başarısız.');
-        }
-    }catch(error){
-        alert('Sunucu hatası!');
-    }
-}
-
-//Rezervasyon iptali
-async function cancelReservation(reservationId) {
-    if(!confirm("Bu rezervasyonu iptal etmek istediğinize emin misiniz?")) return;
-
-    try{
-        const response = await fetch(`${API_BASE_URL}/events/reservation/${reservationId}`, {
-            method: 'DELETE'
-        });
-
-        if(response.ok){
-            alert('İptal başarılı!');
-            loadEvents();   //KOntenjanların güncellenmesini sağla
-            loadMyReservations(); //İptal edilen kartı ekrandan sil
-        }else{
-            alert('İptal işlemi başarısız oldu.');
-        }
-    }catch(error){
-        alert('Sunucu hatası!');
-    }
-}
 
 function viewEventDetail(id){
     window.location.href = `event-detail.html?id=${id}`;

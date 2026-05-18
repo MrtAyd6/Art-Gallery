@@ -4,46 +4,109 @@ Users (Kullanıcılar)
     - UserID (INT) - Primary Key, Auto Increment
     - FullName (VARCHAR) - Kullanıcının adı soyadı
     - Email (VARCHAR) - Unique (Her e-posta sadece bir kez kayıt olabilir)
-    - PasswordHash (VARCHAR) - Şifreler düz metin tutulmaz, hash'lenmesi lazım
-    - Role (VARCHAR) - 'Admin' veya 'Customer'
+    - PasswordHash (VARCHAR) - Şifreler düz metin tutulmaz, bcrypt ile hash'lenir
+    - Role (VARCHAR) - 'Admin', 'Customer', 'Artist', 'WorkshopOwner' (Varsayılan: 'Customer')
 
 Artworks (Eserler)
     - ArtworkID (INT) - Primary Key
     - Title (VARCHAR) - Eserin adı
-    - ArtistName ( VARCHAR) - Sanatçının adı
+    - ArtistName (VARCHAR) - Sanatçının adı
+    - ArtistId (INT) - Foreign Key (Users tablosuna bağlı)
     - Description (TEXT) - Eserin uzun açıklaması
     - ImageUrl (VARCHAR) - Görselin dosya yolu veya linki
-    - Price (Decimal(10,2)) - Parasal değerler için Float yerine her zaman Decimal kullanılır
-    - Category (VARCHAR) - Tablo, heykel, dijital sanat vb. (filtreleme için önemli)
+    - Price (Decimal(10,2)) - Eserin satış fiyatı
+    - Category (VARCHAR) - Tablo, heykel, dijital sanat vb.
+    - Status (VARCHAR) - 'Active' (Varsayılan) veya 'Sold'
+    - ViewsCount (INT) - Görüntülenme sayısı (Varsayılan: 0)
+    - DiscountRate (INT) - İndirim oranı % olarak (Varsayılan: 0)
 
 Events (Etkinlikler/Atölyeler)
     - EventID (INT) - Primary Key
     - Title (VARCHAR) - Etkinlik adı
-    - EventDate (DATETIME) - Etkinliğin gerçekleşeceği tarih ve saat
+    - Description (TEXT) - Etkinlik detayı
+    - EventDate (TIMESTAMP) - Etkinliğin gerçekleşeceği tarih ve saat
     - TotalCapacity (INT) - Maksimum katılımcı sayısı
-    - CurrentCapacity (INT) - Kalan kontenjan (Bunu Trigger ile güncelleyeceğiz)
+    - CurrentCapacity (INT) - Kalan kontenjan
     - Price (Decimal(10,2)) - Etkinlik ücreti
+    - OrganizerId (INT) - Foreign Key (Etkinliği düzenleyen atölye sahibi, Users'a bağlı)
+    - DiscountRate (INT) - İndirim oranı % olarak (Varsayılan: 0)
+
+EventSessions (Etkinlik Seansları)
+    - SessionID (INT) - Primary Key
+    - EventId (INT) - Foreign Key (Events tablosuna bağlı)
+    - SessionDate (VARCHAR) - Seansın tarihi
+    - StartTime (VARCHAR) - Seansın başlangıç saati
+    - EndTime (VARCHAR) - Seansın bitiş saati
+    - TotalCapacity (INT) - Seans için toplam kontenjan
+    - CurrentCapacity (INT) - Seans için kalan kontenjan
 
 
-2 - İlişki ve İşlem tablosu
+2 - İlişki ve İşlem Tabloları
 
-Reservations (Rezervasyonlar)
+Reservations (Rezervasyonlar - Etkinlik Biletleri)
     - ReservationID (INT) - Primary Key
-    - UserID (INT) - Foreign Key (Users tablosuna bağlı)
+    - UserID (INT) - Foreign Key (Users tablosuna bağlı, satın alan)
     - EventID (INT) - Foreign Key (Events tablosuna bağlı)
-    - ParticipantCount (INT) - Kaç kişilik rezervasyon yapıldığı
-    - Status (VARCHAR) - 'Aktif', 'İptal edildi', 'Tamamlandı' (Rezervasyon güncelleme/iptal etme gereksinimi için)
-    - CreatedAt (DATETIME) - Rezervasyonun yapıldığı an
+    - SessionID (INT) - Foreign Key (EventSessions tablosuna bağlı)
+    - TicketCount (INT) - Kaç kişilik bilet alındığı
+    - TotalPrice (DECIMAL(10,2)) - Toplam ödenen tutar
+    - Status (VARCHAR) - 'Active', 'Cancelled', vb. (Varsayılan: 'Active')
+    - CreatedAt (TIMESTAMP) - Rezervasyonun yapıldığı an
+
+Orders (Siparişler - Eser Satın Alımları)
+    - OrderID (INT) - Primary Key
+    - UserID (INT) - Foreign Key (Users tablosuna bağlı, satın alan)
+    - ArtworkID (INT) - Foreign Key (Artworks tablosuna bağlı)
+    - OrderDate (TIMESTAMP) - Sipariş zamanı
+    - PaymentMethod (VARCHAR) - Kredi kartı, havale vb.
+    - Status (VARCHAR) - 'Pending', 'Approved', 'Rejected' (Varsayılan: 'Pending')
 
 Favorites (Favoriler)
-    - UserID (INT) - Foreign Key
-    - ArtworkID (INT) - Foreign Key
+    - UserID (INT) - Foreign Key (Users tablosuna bağlı)
+    - ArtworkID (INT) - Foreign Key (Artworks tablosuna bağlı)
+    - (UserID ve ArtworkID birlikte Composite Primary Key)
 
-Reviews (Yorumlar)
-    - ReviewID (INT) - Primary Key
-    - UserID (INT) - Foreign Key
-    - ArtworkID (INT) - Foreign Key (Sadece eser yorumuysa dolu olur)
+Comments (Yorumlar ve Değerlendirmeler)
+    - CommentID (INT) - Primary Key
+    - UserID (INT) - Foreign Key (Users tablosuna bağlı, yorumu yapan)
     - EventID (INT) - Foreign Key (Sadece etkinlik yorumuysa dolu olur)
-    - Rating (TINYINT) - 1 ile 5 arası puanlama
-    - Comment (TEXT) - Yorum metni
-    - HelpfulVotes (INT) - "Faydalı bulma" oylaru için sayaç
+    - ArtworkID (INT) - Foreign Key (Sadece eser yorumuysa dolu olur)
+    - CommentText (TEXT) - Yorum metni
+    - Rating (INT) - 1 ile 5 arası puanlama
+    - HelpfulVotes (INT) - "Faydalı bulma" oyları için sayaç (Varsayılan: 0)
+    - CreatedAt (TIMESTAMP) - Yorum zamanı
+    - OwnerReply (TEXT) - Sanatçı veya Atölye Sahibinin yanıtı
+    - AdminReply (TEXT) - Sistem yöneticisinin yanıtı
+
+CommentVotes (Yorum Oyları)
+    - UserId (INT) - Foreign Key (Users)
+    - CommentId (INT) - Foreign Key (Comments)
+    - (Bir kişi bir yoruma 1 kez oy verebilir. İkisi Composite Primary Key)
+
+
+3 - Sistem Yönetimi Tabloları
+
+Coupons (İndirim Kuponları)
+    - CouponID (INT) - Primary Key
+    - Code (VARCHAR) - Benzersiz (Unique) kupon kodu
+    - DiscountRate (INT) - İndirim oranı yüzdesi (1-100 arası)
+    - OwnerId (INT) - Kişiye özelse UserID, herkese açıksa 0 (Varsayılan: 0)
+    - CouponType (VARCHAR) - 'Artwork', 'Event' veya 'General'
+    - IsActive (BOOLEAN) - Kuponun kullanım durumu (Varsayılan: TRUE)
+
+SupportTickets (Destek Talepleri)
+    - TicketID (INT) - Primary Key
+    - UserID (INT) - Foreign Key (Talebi açan kullanıcı)
+    - Subject (VARCHAR) - Talep konusu
+    - Message (TEXT) - Talep detayı
+    - Status (VARCHAR) - 'Bekliyor' veya 'Yanıtlandı'
+    - AdminReply (TEXT) - Yöneticinin verdiği cevap
+    - CreatedAt (TIMESTAMP) - Talebin açıldığı zaman
+
+RoleRequests (Rol Değiştirme Başvuruları)
+    - RequestId (INT) - Primary Key
+    - UserId (INT) - Foreign Key (Başvuruyu yapan kullanıcı)
+    - RequestedRole (VARCHAR) - 'Artist' veya 'WorkshopOwner'
+    - Message (TEXT) - Başvuru için kişinin yazdığı tanıtım yazısı
+    - Status (VARCHAR) - 'Pending', 'Approved', 'Rejected' (Varsayılan: 'Pending')
+    - CreatedAt (TIMESTAMP) - Başvuru zamanı

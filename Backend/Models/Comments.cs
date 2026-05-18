@@ -15,4 +15,9 @@ namespace Backend.Models
 
         public string? UserName { get; set; }    //Yorumu yapanın adını göstermek için ekstra alan
     }
+
+    public class CommentReplyDto
+    {
+        public string ReplyText { get; set; }
+    }
 }
