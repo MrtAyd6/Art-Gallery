@@ -1,66 +1,66 @@
-# 🎨 Art Gallery & Workshop Management System
+# 🎨 Sanat Galerisi ve Atölye Yönetim Sistemi
 
-Welcome to the **Art Gallery & Workshop Management System**! This is a comprehensive, full-stack web application designed to bring art enthusiasts, artists, and workshop owners together under one creative roof. 
+**Sanat Galerisi ve Atölye Yönetim Sistemi**'ne hoş geldiniz! Bu proje, sanatseverleri, sanatçıları ve atölye sahiplerini aynı yaratıcı çatı altında buluşturmak için tasarlanmış kapsamlı, tam yığın (full-stack) bir web uygulamasıdır.
 
-Whether you want to browse and purchase unique artworks, reserve a spot in a creative workshop, or manage your own art portfolio, this platform provides a seamless and dynamic experience.
-
----
-
-## ✨ Key Features
-
-### 🖼️ For Art Enthusiasts
-- **Discover Artworks:** View detailed information, high-quality images, and artist portfolios.
-- **Smart Comparison:** Compare multiple artworks or events side-by-side based on price, category, and capacity.
-- **Favorites & Purchasing:** Save your favorite artworks and purchase them securely.
-- **Dynamic Events:** Discover, book, and manage your reservations for upcoming art workshops.
-- **Interactive Reviews:** Rate artworks and events, read community reviews, and vote on helpful feedback.
-- **Coupons & Campaigns:** Enjoy special discount codes and seasonal campaigns on both artworks and tickets.
-
-### 🖌️ For Artists & Workshop Owners
-- **Role Management:** Apply for a specialized "Artist" or "Workshop Owner" role from your profile.
-- **Personal Dashboard:** Track your artwork views, sales, event capacities, and manage your portfolio.
-- **Interact with Attendees:** Read and reply to comments left by users who attended your workshops.
-- **Order Management:** Approve or reject incoming purchase requests directly from your panel.
-
-### 🛡️ Admin & Platform Management
-- **Role Approvals:** Review and approve role upgrade requests from users.
-- **Global Statistics:** View platform-wide statistics for events and artworks.
-- **Secure Authentication:** BCrypt password hashing ensures user data remains secure.
-- **Customer Support System:** Users can send support tickets and track responses.
+Benzersiz sanat eserlerini inceleyip satın almak, yaratıcı bir atölyede yer ayırtmak veya kendi sanat portföyünüzü yönetmek istiyorsanız, bu platform size kusursuz ve dinamik bir deneyim sunar.
 
 ---
 
-## 🚀 Technologies Used
+## ✨ Temel Özellikler
 
-- **Backend:** C#, .NET Core Web API
-- **Database:** PostgreSQL (with **Dapper** micro-ORM for high performance)
-- **Frontend:** HTML5, Vanilla CSS, Vanilla JavaScript (No heavy frameworks, blazing fast!)
-- **Security:** BCrypt.Net for secure password hashing.
+### 🖼️ Sanatseverler İçin
+- **Eserleri Keşfedin:** Detaylı bilgiler, yüksek kaliteli görseller ve sanatçı portföylerini inceleyin.
+- **Akıllı Karşılaştırma:** Fiyat, kategori veya kontenjan gibi kriterlere göre birden fazla eseri veya etkinliği yan yana karşılaştırın.
+- **Favoriler ve Satın Alma:** Beğendiğiniz eserleri favorilerinize ekleyin ve güvenle satın alın.
+- **Dinamik Etkinlikler:** Yaklaşan sanat atölyelerini keşfedin, bilet alın ve rezervasyonlarınızı yönetin.
+- **Etkileşimli Yorumlar:** Eserleri ve etkinlikleri puanlayın, topluluk yorumlarını okuyun ve faydalı bulduğunuz değerlendirmelere oy verin.
+- **Kuponlar ve Kampanyalar:** Hem eserlerde hem de etkinlik biletlerinde geçerli özel indirim kodlarından ve dönemsel kampanyalardan yararlanın.
+
+### 🖌️ Sanatçılar ve Atölye Sahipleri İçin
+- **Rol Yönetimi:** Profiliniz üzerinden "Sanatçı" veya "Atölye Sahibi" rolüne geçiş yapmak için başvuru yapın.
+- **Kişisel Yönetim Paneli (Dashboard):** Eserlerinizin görüntülenme sayılarını, satışlarınızı, etkinlik kontenjanlarınızı takip edin ve portföyünüzü yönetin.
+- **Katılımcılarla Etkileşim:** Düzenlediğiniz atölyelere katılan kullanıcıların bıraktığı yorumları okuyun ve onlara yanıt verin.
+- **Sipariş Yönetimi:** Size gelen eser satın alma taleplerini doğrudan panelinizden onaylayın veya reddedin.
+
+### 🛡️ Yönetici (Admin) ve Sistem Yönetimi
+- **Rol Onayları:** Kullanıcılardan gelen rol yükseltme (Sanatçı/Atölye Sahibi) taleplerini inceleyip onaylayın.
+- **Genel İstatistikler:** Etkinlikler ve eserler için platform genelindeki istatistikleri görüntüleyin.
+- **Güvenli Kimlik Doğrulama:** BCrypt şifreleme altyapısı sayesinde kullanıcı verilerinin güvende kalmasını sağlayın.
+- **Müşteri Destek Sistemi:** Kullanıcıların gönderdiği destek taleplerini okuyun ve yönetici yanıtı oluşturun.
 
 ---
 
-## ⚙️ Installation & Setup
+## 🚀 Kullanılan Teknolojiler
 
-Follow these steps to get the project running on your local machine.
+- **Backend (Arka Plan):** C#, .NET Core Web API
+- **Veritabanı:** PostgreSQL (Yüksek performans için **Dapper** micro-ORM kullanılmıştır)
+- **Frontend (Ön Yüz):** HTML5, Vanilla CSS, Vanilla JavaScript (Ağır framework'ler kullanılmamıştır, son derece hızlıdır!)
+- **Güvenlik:** Parolaların güvenli bir şekilde saklanması için BCrypt.Net.
 
-### 1. Database Setup
-Ensure you have **PostgreSQL** installed on your system.
+---
+
+## ⚙️ Kurulum ve Çalıştırma
+
+Projeyi kendi bilgisayarınızda çalıştırmak için aşağıdaki adımları izleyin.
+
+### 1. Veritabanı Kurulumu
+Sisteminizde **PostgreSQL**'in kurulu olduğundan emin olun.
 
 ```bash
-# 1. Log in to PostgreSQL
+# 1. PostgreSQL arayüzüne giriş yapın
 sudo -u postgres psql
 
-# 2. Create the database
+# 2. Veritabanını oluşturun
 CREATE DATABASE art_gallery_db;
 \q
 
-# 3. Run the schema and seed files to construct the database
+# 3. Şema ve örnek veri dosyalarını çalıştırın
 cat Database/create_tables.sql | sudo -u postgres psql -d art_gallery_db
 cat Database/dummy_data.sql | sudo -u postgres psql -d art_gallery_db
 ```
 
-### 2. Backend Setup
-Navigate to the Backend directory and start the .NET API server.
+### 2. Backend Kurulumu
+`Backend` klasörüne gidin ve .NET API sunucusunu başlatın.
 
 ```bash
 cd Backend
@@ -68,26 +68,26 @@ dotnet restore
 dotnet build
 dotnet run
 ```
-*The API will start running, typically accessible at `http://localhost:5160/api`.*
+*API sunucusu çalışmaya başlayacak ve genellikle `http://localhost:5160/api` adresinden erişilebilir olacaktır.*
 
-### 3. Frontend Setup
-The frontend is built with pure HTML/JS/CSS, so you don't need Node.js or npm! Simply serve the `Frontend` directory using any local development web server.
+### 3. Frontend Kurulumu
+Ön yüz saf HTML/JS/CSS ile yazıldığı için Node.js veya npm kullanmanıza gerek yoktur! `Frontend` klasörünü herhangi bir yerel geliştirme sunucusu üzerinden yayınlamanız yeterlidir.
 
 ```bash
-# Example using Python's built-in HTTP server:
+# Python'un yerleşik HTTP sunucusunu kullanan bir örnek:
 cd Frontend
 python3 -m http.server 8000
 ```
-Then navigate to `http://localhost:8000` in your web browser.
+Daha sonra tarayıcınızdan `http://localhost:8000` adresine gidebilirsiniz.
 
 ---
 
-## 📋 Roadmap & Known Issues
-While the core functionality is robust, here are some features planned for the future:
-- [ ] **Live Chat Support:** Real-time messaging system for customer service.
-- [ ] **Verified Buyer Badge:** Adding a "Verified Purchase" tag to reviews from actual buyers.
-- [ ] **Artwork Comment Replies:** Implementing the UI and backend logic for artists to reply to comments on their artworks.
-- [ ] **JWT Authentication:** Adding token-based middleware for secured API endpoints.
+## 📋 Yol Haritası ve Planlanan Özellikler
+Temel işlevler oldukça sağlam olsa da, gelecekte eklenmesi planlanan bazı özellikler şunlardır:
+- [ ] **Canlı Destek:** Müşteri hizmetleri için gerçek zamanlı mesajlaşma sistemi.
+- [ ] **Doğrulanmış Alıcı Rozeti:** Sadece eseri gerçekten satın alan kullanıcıların yorumlarında görünecek bir etiket.
+- [ ] **Eser Yorumlarına Yanıt Verme:** Sanatçıların, kendi eserlerine yapılan yorumlara yanıt verebilmesi için gerekli arayüz ve arka plan kodlaması.
+- [ ] **JWT Kimlik Doğrulaması:** Korumalı API uç noktaları için token tabanlı güvenlik katmanının (Middleware) eklenmesi.
 
 ---
-*Made with ❤️ for Art Lovers.*
+*Sanatseverler için ❤️ ile yapılmıştır.*
