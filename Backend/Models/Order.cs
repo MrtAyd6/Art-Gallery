@@ -9,4 +9,23 @@ namespace Backend.Models
         public string PaymentMethod { get; set; }
         public string Status { get; set; }
     }
+
+    public class CreateOrderDto
+    {
+        public int UserId { get; set; }
+        public int ArtworkId { get; set; }
+        public string PaymentMethod { get; set; }
+    }
+
+    public class OrderRequest
+    {
+        public int UserId { get; set; }
+        public int ArtworkId { get; set; }
+        public string PaymentMethod { get; set; }
+    }
+
+    public class ProcessOrderDto
+    {
+        public string Decision { get; set; }
+    }
 }

@@ -4,7 +4,9 @@ namespace Backend.Models
     {
         public int CouponId { get; set; }
         public string Code { get; set; }
-        public int DiscountPercentage { get; set; }
+        public int DiscountRate { get; set; }
+        public int OwnerId { get; set; }
+        public string CouponType { get; set; }
         public bool IsActive { get; set; }
     }
 
